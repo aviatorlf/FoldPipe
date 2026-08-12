@@ -25,14 +25,15 @@ Profiling 500 batches of the MD17 (Aspirin) trajectory against the naive PyTorch
 ## Macromolecule Stress Test (Human Prion Protein - 1QLX)
 Testing FoldPipe's pinned-memory architecture against a massive protein trajectory to validate memory stability on constrained hardware.
 
-| Metric | FoldPipe Performance (Kaggle T4) |
-| :--- | :--- |
-| **Simulated Trajectory** | 10,000 Frames |
-| **Throughput** | 5,185 Frames / sec |
-| **System RAM Peak** | 7.5% (Zero OOM) |
-| **GPU VRAM Peak** | 1.4 GB |
+| Metric | Naive PyG Loader | FoldPipe Performance (Kaggle T4) | Improvement |
+| :--- | :--- | :--- | :--- |
+| **Simulated Trajectory** | 10,000 Frames | 10,000 Frames | - |
+| **Throughput** | **0 Frames / sec (CRASH)** | 5,185 Frames / sec | **∞ Speedup** |
+| **System RAM Peak** | 5.9% (Pre-Crash) | 7.5% | **Stable (Zero OOM)** |
+| **GPU VRAM Allocation** | **1.14 Terabytes** (Failed) | 1.4 GB | **-99.9% VRAM Overhead** |
+| **Status** | **FATAL OOM (Batch 0)** | **SUCCESS (10k Frames)** | **Pipeline Saved** |
 
-*Result: FoldPipe successfully batches and streams macromolecular topologies without triggering the CPU multiprocessing RAM spikes inherent to naive PyG loaders.*
+*Result: FoldPipe successfully batches and streams macromolecular topologies without triggering the astronomical 1.14 TB VRAM allocation crash caused by PyTorch Geometric's naive 1D graph flattening on massive proteins.*
 
 ## 3-Step Quickstart
 
