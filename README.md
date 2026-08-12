@@ -27,7 +27,7 @@ To be 100% factual, transparent, and defensible in peer review, FoldPipe quantit
 ## Empirical Whitepaper Benchmark
 To prove the architecture's efficiency at eliminating network I/O bounds, we conducted a rigorous A/B benchmark on a Kaggle Hardware instance with a multi-terabyte trajectory dataset.
 
-![Benchmark Results](assets/benchmark_comparison.png)
+![Benchmark Results](https://raw.githubusercontent.com/aviatorlf/FoldPipe/main/assets/benchmark_comparison.png)
 
 ### The Results
 1. **Baseline Failure (PyTorch Geometric):** The standard in-memory dataloader suffered a catastrophic memory leak. It breached the 7.4 GB process limit and crashed the OS (Exit Code 137). GPU utilization was 0% as the pipeline hung on network I/O.
