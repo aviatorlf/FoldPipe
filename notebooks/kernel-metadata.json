@@ -1,7 +1,7 @@
 {
-  "id": "dhirenkhatri/foldpipe-optimized",
-  "title": "FoldPipe Optimized",
-  "code_file": "optimized_training.ipynb",
+  "id": "dhirenkhatri/foldpipe-prion",
+  "title": "FoldPipe Prion Simulation",
+  "code_file": "prion_training.ipynb",
   "language": "python",
   "kernel_type": "notebook",
   "is_private": "true",
