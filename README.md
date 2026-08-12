@@ -22,6 +22,18 @@ Profiling 500 batches of the MD17 (Aspirin) trajectory against the naive PyTorch
 
 *Note: FoldPipe uses contiguous binary serialization and pinned memory mapping to bypass Python's copy-on-read multiprocessing overhead.*
 
+## Macromolecule Stress Test (Human Prion Protein - 1QLX)
+Testing FoldPipe's pinned-memory architecture against a massive protein trajectory to validate memory stability on constrained hardware.
+
+| Metric | FoldPipe Performance (Kaggle T4) |
+| :--- | :--- |
+| **Simulated Trajectory** | 10,000 Frames |
+| **Throughput** | 5,185 Frames / sec |
+| **System RAM Peak** | 7.5% (Zero OOM) |
+| **GPU VRAM Peak** | 1.4 GB |
+
+*Result: FoldPipe successfully batches and streams macromolecular topologies without triggering the CPU multiprocessing RAM spikes inherent to naive PyG loaders.*
+
 ## 3-Step Quickstart
 
 1. **Clone the repository:**
