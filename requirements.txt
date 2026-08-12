@@ -1,0 +1,10 @@
+torch>=2.0.0
+torchmd-net
+jupyter
+notebook
+kaggle
+tensorboard
+numpy
+scipy
+pandas
+tqdm
