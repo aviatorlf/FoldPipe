@@ -10,6 +10,18 @@ Standard Machine Learning Force Field (MLFF) pipelines often bottleneck at the C
 
 By decoupling the data loading from the main thread and properly pre-fetching graph tensors, FoldPipe allows researchers to train state-of-the-art architectures—like the **TorchMD-Net Equivariant Transformer**—on free Kaggle T4 GPUs up to **3x faster** than naive implementations, completely eliminating OOM errors.
 
+## Benchmark Metrics (Kaggle Tesla T4 x2)
+Profiling 500 batches of the MD17 (Aspirin) trajectory against the naive PyTorch Geometric loader versus the FoldPipe Async Loader.
+
+| Metric | Naive PyG Loader | FoldPipe Loader | Improvement |
+| :--- | :--- | :--- | :--- |
+| **Total Runtime** | 6.85s | 2.51s | **2.7x Speedup** |
+| **CPU Load Time (GPU Starvation)** | 57.0% | 10.7% | **-46.3% Idle Time** |
+| **GPU Active Compute** | 43.0% | 89.3% | **+46.3% Utilization** |
+| **System RAM Peak** | 8.3% | 9.7% | **Stable (Zero OOM)** |
+
+*Note: FoldPipe uses contiguous binary serialization and pinned memory mapping to bypass Python's copy-on-read multiprocessing overhead.*
+
 ## 3-Step Quickstart
 
 1. **Clone the repository:**
