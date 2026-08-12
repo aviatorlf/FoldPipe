@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import time
-from .dataset import get_optimized_dataloader
+from foldpipe.data_loader import get_optimized_dataloader
 from torchmdnet.models.model import create_model
 
 def train_baseline_optimized(epochs=10):

@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+message: "If you use this software in your research, please cite it as below."
+authors:
+  - family-names: "Khatri"
+    given-names: "Dhiren"
+title: "FoldPipe: An I/O-Optimized Surrogate Pipeline for High-Throughput Molecular Dynamics"
+version: 1.0.0
+date-released: 2026-08-10
+url: "https://github.com/aviatorlf/FoldPipe"
