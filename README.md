@@ -6,16 +6,15 @@
 Standard Machine Learning Force Field (MLFF) pipelines often bottleneck at the CPU data-loader. When dealing with multi-terabyte graph representations of molecular datasets (like MD17 or AlphaFold trajectories), standard in-memory pipelines (like PyTorch Geometric's `InMemoryDataset`) cause severe GPU starvation. On free-tier hardware with limited RAM (such as a Kaggle P100 or T4), this inevitably leads to devastating Out-Of-Memory (OOM) crashes and abysmally slow training throughput.
 
 ## The Solution
-**FoldPipe** introduces an asynchronous, bounded-memory streaming architecture that completely decouples cloud I/O latency from CUDA execution. 
+**FoldPipe** is a domain-specific integration of bounded-buffer asynchronous prefetching tailored for native `.pt` molecular trajectories. It bridges the gap between PyG's in-memory/on-disk abstractions and format-converting streaming systems such as WebDataset, particularly for memory-constrained ephemeral compute.
 
-FoldPipe is designed for **both** usability and scale: it wraps standard PyTorch/PyG classes under the hood so researchers don't have to rewrite their code, and it is pip-packaged so you can install it with a single command. By applying concurrent `ThreadPoolExecutor` pre-fetching, parallel I/O batching, and explicit Python garbage collection, FoldPipe allows researchers to train state-of-the-art graph neural networks on massive datasets using cheap, low-memory preemptible instances.
+FoldPipe is designed for **both** usability and scale: it provides an out-of-core streaming orchestration layer for datasets that exceed local memory constraints, and it is pip-packaged so you can install it with a single command. By applying concurrent `ThreadPoolExecutor` pre-fetching, parallel I/O batching, and explicit Python garbage collection, FoldPipe allows researchers to train state-of-the-art graph neural networks directly from remote storage on massive datasets using cheap, low-memory preemptible instances.
 
 ## Honest Positioning & Prior Art
-To be 100% factual, transparent, and defensible in peer review, FoldPipe quantitatively outperforms prior art in specific, non-gimmicky metrics.
+To be 100% factual, transparent, and defensible in peer review, here is how FoldPipe positions itself against the prior art:
 
-*   **"We do not replace LMDB for local high-performance computing clusters."** (C++ memory-mapped databases reading off local NVMe drives are virtually impossible to beat in raw throughput.)
-*   **"We eliminate the 2x storage penalty and multi-hour offline conversion phase required by LMDB and WebDataset, providing equivalent GPU saturation directly on native PyTorch `.pt` tensors."**
-*   **"We fix PyTorch Geometric's fatal memory scaling flaw, turning an O(N) OOM failure into an O(1) 1.5 GB flat stream."**
+*   **"We do not replace LMDB for local high-performance computing clusters."** Existing out-of-core streaming systems like WebDataset and LMDB provide petascale throughput. However, they require researchers to convert their native PyTorch/PyG outputs into POSIX `.tar` archives or binary databases. FoldPipe sacrifices absolute peak cluster throughput to eliminate this conversion step, allowing researchers to train directly on native `.pt` shards.
+*   **"We extend the PyTorch Geometric ecosystem."** PyG's `InMemoryDataset` provides excellent throughput for datasets that fit in RAM. FoldPipe provides an outer orchestration layer for datasets that exceed local RAM limits, turning an out-of-memory failure into an O(1) ~1.5 GB flat stream.
 
 | Metric | PyG InMemoryDataset | PyG On-Disk Dataset | LMDB (Meta AI) | FoldPipe (Ours) |
 | :--- | :--- | :--- | :--- | :--- |

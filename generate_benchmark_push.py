@@ -3,6 +3,9 @@ import json
 import shutil
 
 os.makedirs("benchmark_notebook", exist_ok=True)
+if os.path.exists("benchmark_notebook/foldpipe"):
+    shutil.rmtree("benchmark_notebook/foldpipe")
+shutil.copytree("foldpipe", "benchmark_notebook/foldpipe")
 
 # Read the benchmark python script
 with open("scripts/benchmark_whitepaper.py", "r") as f:
