@@ -33,23 +33,48 @@ To prove the architecture's efficiency at eliminating network I/O bounds, we con
 1. **Baseline Failure (PyTorch Geometric):** The standard in-memory dataloader suffered a catastrophic memory leak. It breached the 7.4 GB process limit and crashed the OS (Exit Code 137). GPU utilization was 0% as the pipeline hung on network I/O.
 2. **FoldPipe Success:** By pipelining background network fetches with foreground 20-epoch mini-batch GPU processing, FoldPipe strictly bounded RAM utilization below 1.8 GB and achieved **near 100% continuous GPU saturation**, successfully masking all network latency.
 
-## 3-Step Quickstart
+## Quickstart & Usage
 
-1. **Clone & Install the package:**
+### 1. Installation
+Install directly from PyPI (Recommended):
+```bash
+pip install foldpipe
+```
+
+*(Alternative)* Install from source:
 ```bash
 git clone https://github.com/aviatorlf/FoldPipe.git
 cd FoldPipe
 pip install -e .
 ```
 
-2. **(Alternative) Install directly via pip:**
-```bash
-pip install git+https://github.com/aviatorlf/FoldPipe.git
-```
+### 2. Standard PyTorch Training Loop
+FoldPipe operates as a drop-in iterator. It handles the background threading and garbage collection automatically.
 
-3. **Run the optimized benchmark:**
-```bash
-python scripts/run_benchmark.py
+```python
+import torch
+from foldpipe import AsyncFoldPipeLoader
+
+# Initialize the streaming loader
+loader = AsyncFoldPipeLoader(
+    drive_folder_id="1Few5wzRuuhlwbj4DJD9nkOP98t_QqZcz",
+    batch_size=128
+)
+
+model = MyEquivariantNetwork().to('cuda')
+optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+
+# Training Loop
+for chunk in loader:
+    for batch in chunk:
+        optimizer.zero_grad()
+        
+        # Hardware Masking: chunk N+1 is fetched while GPU computes chunk N
+        out = model(batch.to('cuda', non_blocking=True))
+        loss = criterion(out)
+        
+        loss.backward()
+        optimizer.step()
 ```
 
 ## Kaggle Integration
