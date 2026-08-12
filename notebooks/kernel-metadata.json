@@ -1,13 +1,16 @@
 {
-  "id": "dhirenkhatri/foldpipe-prion-end-to-end",
-  "title": "FoldPipe Prion End-to-End",
-  "code_file": "prion_end_to_end.ipynb",
+  "id": "dhirenkhatri/foldpipe-prion-overnight",
+  "title": "FoldPipe Prion Overnight",
+  "code_file": "foldpipe_script.ipynb",
   "language": "python",
   "kernel_type": "notebook",
-  "is_private": "false",
-  "enable_gpu": "true",
-  "enable_internet": "true",
-  "dataset_sources": [],
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_internet": true,
+  "dataset_sources": [
+    "dhirenkhatri/gcp-secret-dataset"
+  ],
   "competition_sources": [],
-  "kernel_sources": []
+  "kernel_sources": [],
+  "machine_shape": "NvidiaTeslaT4"
 }
