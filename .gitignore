@@ -11,3 +11,6 @@ temp/
 .vscode/
 md17_data/
 processed/
+
+# GCP Secrets
+gcp_secret_dataset/
