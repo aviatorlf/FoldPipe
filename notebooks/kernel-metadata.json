@@ -1,7 +1,7 @@
 {
-  "id": "dhirenkhatri/foldpipe-baseline",
-  "title": "FoldPipe Baseline",
-  "code_file": "baseline_training.ipynb",
+  "id": "dhirenkhatri/foldpipe-optimized",
+  "title": "FoldPipe Optimized",
+  "code_file": "optimized_training.ipynb",
   "language": "python",
   "kernel_type": "notebook",
   "is_private": "true",
