@@ -1,8 +1,13 @@
 import torch
-from torch.utils.data import DataLoader
+from torch_geometric.loader import DataLoader
 from torchmdnet.datasets import MD17
 
-def get_optimized_dataloader(data_dir='./md17_data', dataset_arg='aspirin', batch_size=64, num_workers=4):
+# PyTorch 2.6 defaults torch.load to weights_only=True, which breaks torchmd-net cache unpickling.
+_original_load = torch.load
+torch.load = lambda *args, **kwargs: _original_load(*args, **{**kwargs, 'weights_only': False})
+
+
+def get_optimized_dataloader(data_dir='./md17_data', molecules='aspirin', batch_size=64, num_workers=4):
     """
     Returns an optimized PyTorch DataLoader for the MD17 dataset.
     
@@ -11,7 +16,7 @@ def get_optimized_dataloader(data_dir='./md17_data', dataset_arg='aspirin', batc
     - pin_memory=True allocates data in page-locked memory, which speeds up transfer to the GPU.
     - prefetch_factor > 1 ensures the data queue is populated before the GPU asks for it.
     """
-    dataset = MD17(data_dir, dataset_arg=dataset_arg)
+    dataset = MD17(data_dir, molecules=molecules)
     
     dataloader = DataLoader(
         dataset,

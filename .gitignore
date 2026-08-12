@@ -1,0 +1,11 @@
+# Environments
+.venv/
+__pycache__/
+
+# Kaggle Output
+results/
+temp/
+
+# IDE
+.idea/
+.vscode/
