@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="foldpipe",
-    version="0.1.2",
+    version="0.2.0",
     author="FoldPipe Contributors",
     author_email="contact@foldpipe.example",
     description="I/O-optimized Machine Learning Force Field (MLFF) data pipeline for constrained hardware.",

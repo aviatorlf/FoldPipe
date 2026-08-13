@@ -4,6 +4,6 @@ authors:
   - family-names: "Khatri"
     given-names: "Dhiren"
 title: "FoldPipe: An I/O-Optimized Surrogate Pipeline for High-Throughput Molecular Dynamics"
-version: 1.0.0
+version: 0.2.0
 date-released: 2026-08-10
 url: "https://github.com/aviatorlf/FoldPipe"

@@ -22,13 +22,13 @@ To be 100% factual, transparent, and defensible in peer review, here is how Fold
 | **FoldPipe** | **0 GB** | **>90%** | $O(1)$ memory. Native `.pt` support. |
 
 ## Empirical Whitepaper Benchmark
-To prove the architecture's efficiency at eliminating network I/O bounds, we conducted a rigorous A/B benchmark on a Kaggle Hardware instance with a multi-terabyte trajectory dataset.
+To prove the architecture's efficiency at eliminating network I/O bounds, we benchmarked FoldPipe against shards drawn from a multi-terabyte trajectory corpus on a Kaggle Hardware instance.
 
 ![Benchmark Results](assets/benchmark_comparison.png)
 
 ### The Results
 1. **RAM Scaling ($O(N)$ vs $O(1)$):** The PyG Baseline dataloader demonstrated linear $O(N)$ memory growth, hoarding every downloaded tensor in RAM. FoldPipe successfully demonstrated strict $O(1)$ memory bounding by yielding and aggressively releasing each chunk after GPU computation.
-2. **Hardware Crossover & GPU Saturation:** The Baseline pipeline forced the GPU to idle synchronously while waiting for sequential network downloads. FoldPipe's asynchronous producer/consumer architecture completely hid the network I/O latency behind compute. When processing a sufficiently deep neural network, FoldPipe achieved **continuous >90% GPU saturation** on Kaggle's T4/P100 instances, mathematically proving our network-latency masking crossover point.
+2. **Hardware Crossover & GPU Saturation:** The Baseline pipeline forced the GPU to idle synchronously while waiting for sequential network downloads. FoldPipe's asynchronous producer/consumer architecture completely hid the network I/O latency behind compute. When processing a sufficiently deep neural network, FoldPipe achieved **continuous >90% GPU saturation** on Kaggle's T4/P100 instances, empirically demonstrating our network-latency masking crossover point.
 
 ## Quickstart & Usage
 
