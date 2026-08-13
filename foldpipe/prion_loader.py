@@ -2,6 +2,7 @@ import os
 import torch
 
 from torch_geometric.data import Data
+from torch.utils.data import IterableDataset
 from Bio import PDB
 import glob
 
@@ -9,7 +10,7 @@ ELEMENT_TO_Z = {
     'H': 1, 'C': 6, 'N': 7, 'O': 8, 'S': 16, 'P': 15,
 }
 
-class PrionStreamer:
+class PrionStreamer(IterableDataset):
     """
     True O(1) streaming parser for raw PDB files. 
     Does NOT use PyG InMemoryDataset to avoid building a data_list.
