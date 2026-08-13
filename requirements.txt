@@ -2,3 +2,5 @@ torch>=2.0.0
 torch_geometric>=2.3.0
 torchmd-net
 biopython
+google-api-python-client
+google-auth-oauthlib

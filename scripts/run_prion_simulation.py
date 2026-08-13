@@ -2,7 +2,7 @@ import os
 import torch
 import torch.nn as nn
 from torch_geometric.loader import DataLoader
-from foldpipe.prion_loader import PrionDataset
+from foldpipe.prion_loader import PrionStreamer
 from torchmdnet.models.model import create_model
 
 def run_prion_test():
@@ -19,17 +19,12 @@ def run_prion_test():
         
     # 3. Load Prion Dataset
     print("\nLoading Prion Dataset...")
-    dataset = PrionDataset(root='./data/prion')
-    print(f"Loaded {len(dataset)} Prion structures.")
+    dataset = PrionStreamer(raw_dir='./data/prion/raw')
     
-    # Inspect the first structure
-    data = dataset[0]
-    num_atoms = data.z.shape[0]
+    # 4. Initialize stream and pull first batch
+    batch = next(iter(dataset)).to(device)
+    num_atoms = batch.z.shape[0]
     print(f"Structure 0 (1QLX) has {num_atoms} atoms.")
-    
-    # 4. Initialize DataLoader
-    loader = DataLoader(dataset, batch_size=1, shuffle=False)
-    batch = next(iter(loader)).to(device)
     
     # 5. Initialize TorchMD-Net Equivariant Transformer
     from torchmdnet.scripts.train import get_args

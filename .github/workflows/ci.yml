@@ -38,4 +38,5 @@ jobs:
     - name: Run benchmark (CPU mode)
       run: |
         # Run a simple sanity check on CPU to ensure no syntax/import errors
-        python scripts/run_prion_simulation.py --cpu-only || echo "Simulation completed or safely skipped."
+        python -c "from foldpipe import AsyncFoldPipeLoader, PrionStreamer"
+        python scripts/run_prion_simulation.py --cpu-only

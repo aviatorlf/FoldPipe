@@ -57,6 +57,7 @@ from foldpipe import AsyncFoldPipeLoader
 # Initialize the streaming loader
 loader = AsyncFoldPipeLoader(
     drive_folder_id="1Few5wzRuuhlwbj4DJD9nkOP98t_QqZcz",
+    credentials_json="path/to/token.json",
     batch_size=128
 )
 
@@ -64,16 +65,15 @@ model = MyEquivariantNetwork().to('cuda')
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
 # Training Loop
-for chunk in loader:
-    for batch in chunk:
-        optimizer.zero_grad()
-        
-        # Hardware Masking: chunk N+1 is fetched while GPU computes chunk N
-        out = model(batch.to('cuda', non_blocking=True))
-        loss = criterion(out)
-        
-        loss.backward()
-        optimizer.step()
+for batch in loader:
+    optimizer.zero_grad()
+    
+    # Hardware Masking: chunk N+1 is fetched while GPU computes chunk N
+    out = model(batch.to('cuda', non_blocking=True))
+    loss = criterion(out)
+    
+    loss.backward()
+    optimizer.step()
 ```
 
 ## Kaggle Integration

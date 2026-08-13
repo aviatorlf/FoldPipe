@@ -2,12 +2,11 @@ import io
 import gc
 import torch
 import concurrent.futures
-from torch.utils.data import IterableDataset
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
 from google.oauth2.credentials import Credentials
 
-class AsyncFoldPipeLoader(IterableDataset):
+class AsyncFoldPipeLoader:
     """
     True O(1) bounded-memory asynchronous streaming dataloader.
     Downloads native PyTorch .pt chunk files from Google Drive in the background.
@@ -22,10 +21,21 @@ class AsyncFoldPipeLoader(IterableDataset):
         creds = Credentials.from_authorized_user_info(self.creds_json, scopes=['https://www.googleapis.com/auth/drive'])
         self.drive_service = build('drive', 'v3', credentials=creds)
         
-        # Get list of files
+        # Get list of files with pagination and deterministic ordering
+        self.files = []
         query = f"'{self.drive_folder_id}' in parents and name contains 'checkpoint_batch_' and trashed = false"
-        results = self.drive_service.files().list(q=query, fields="files(id, name)").execute()
-        self.files = results.get('files', [])
+        page_token = None
+        while True:
+            results = self.drive_service.files().list(
+                q=query, 
+                fields="nextPageToken, files(id, name)", 
+                orderBy="name_natural",
+                pageToken=page_token
+            ).execute()
+            self.files.extend(results.get('files', []))
+            page_token = results.get('nextPageToken')
+            if not page_token:
+                break
         
     def _download_chunk(self, file_id):
         """Producer function: executed in background thread."""
@@ -59,6 +69,5 @@ class AsyncFoldPipeLoader(IterableDataset):
                 for b in range(0, chunk_tensor.size(0), self.batch_size):
                     yield chunk_tensor[b:b+self.batch_size]
                 
-                # Explicitly delete the chunk and garbage collect to guarantee O(1) memory bound
+                # Explicitly delete the chunk (relying on Python GC for O(1) bound)
                 del chunk_tensor
-                gc.collect()

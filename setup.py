@@ -23,6 +23,8 @@ setup(
     install_requires=[
         "torch>=1.10.0",
         "torch-geometric>=2.0.0",
-        "biopython>=1.79"
+        "biopython>=1.79",
+        "google-api-python-client",
+        "google-auth-oauthlib"
     ],
 )
