@@ -16,3 +16,6 @@ processed/
 
 # GCP Secrets
 gcp_secret_dataset/
+*.egg-info/
+build/
+dist/
