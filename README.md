@@ -26,7 +26,7 @@ To be 100% factual, transparent, and defensible in peer review, here is how Fold
 ## Empirical Whitepaper Benchmark
 To prove the architecture's efficiency at eliminating network I/O bounds, we conducted a rigorous A/B benchmark on a Kaggle Hardware instance with a multi-terabyte trajectory dataset.
 
-![Benchmark Results](https://raw.githubusercontent.com/aviatorlf/FoldPipe/main/assets/benchmark_comparison.png)
+![Benchmark Results](assets/benchmark_comparison.png)
 
 ### The Results
 1. **RAM Scaling ($O(N)$ vs $O(1)$):** The PyG Baseline dataloader demonstrated linear $O(N)$ memory growth, hoarding every downloaded tensor in RAM. FoldPipe successfully demonstrated strict $O(1)$ memory bounding by yielding and aggressively garbage-collecting each chunk after GPU computation.
