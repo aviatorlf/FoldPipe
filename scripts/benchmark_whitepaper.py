@@ -8,6 +8,7 @@ import threading
 import subprocess
 import matplotlib.pyplot as plt
 from foldpipe import AsyncFoldPipeLoader
+from foldpipe.sources import GoogleDriveSource
 from googleapiclient.discovery import build
 from google.oauth2.credentials import Credentials
 import glob
@@ -149,8 +150,9 @@ def run_foldpipe_stream(creds_json, files, model):
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     criterion = nn.MSELoss()
     
-    # Initialize the True AsyncFoldPipeLoader
-    loader = AsyncFoldPipeLoader(drive_folder_id=DRIVE_FOLDER_ID, credentials_json=creds_json, batch_size=BATCH_SIZE)
+    # Initialize the True AsyncFoldPipeLoader with GoogleDriveSource
+    source = GoogleDriveSource(folder_id=DRIVE_FOLDER_ID, credentials_json=creds_json)
+    loader = AsyncFoldPipeLoader(source=source, batch_size=BATCH_SIZE)
     # Hack the loader to only fetch MAX_CHUNKS for the benchmark
     loader.files = files[:MAX_CHUNKS]
     
@@ -217,8 +219,8 @@ if __name__ == "__main__":
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
     
     # Left: RAM Leak vs Stable
-    # Maintained pedantic accuracy label requested previously
-    ax1.plot(base_prof.time_history, base_prof.ram_history, color='red', label='InMemoryDataset (O(N) Accumulation)')
+    # Maintained pedantic accuracy label requested previously, and corrected PyG name
+    ax1.plot(base_prof.time_history, base_prof.ram_history, color='red', label='Eager in-memory accumulation')
     ax1.plot(fp_deep_prof.time_history, fp_deep_prof.ram_history, color='green', label='FoldPipe (Bounded)')
     if crashed:
         ax1.scatter([base_prof.time_history[-1]], [base_prof.ram_history[-1]], color='darkred', s=150, marker='X', label='Memory Safety Cutoff')

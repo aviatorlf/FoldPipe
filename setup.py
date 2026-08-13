@@ -25,6 +25,8 @@ setup(
         "torch-geometric>=2.0.0",
         "biopython>=1.79",
         "google-api-python-client",
-        "google-auth-oauthlib"
+        "google-auth-oauthlib",
+        "requests",
+        "huggingface_hub"
     ],
 )

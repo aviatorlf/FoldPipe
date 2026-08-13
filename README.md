@@ -16,12 +16,10 @@ To be 100% factual, transparent, and defensible in peer review, here is how Fold
 *   **"We do not replace LMDB for local high-performance computing clusters."** Existing out-of-core streaming systems like WebDataset and LMDB provide petascale throughput. However, they require researchers to convert their native PyTorch/PyG outputs into POSIX `.tar` archives or binary databases. FoldPipe sacrifices absolute peak cluster throughput to eliminate this conversion step, allowing researchers to train directly on native `.pt` shards.
 *   **"We extend the PyTorch Geometric ecosystem."** PyG's `InMemoryDataset` provides excellent throughput for datasets that fit in RAM. FoldPipe provides an outer orchestration layer for datasets that exceed local RAM limits, turning an out-of-memory failure into an O(1) ~1.5 GB flat stream.
 
-| Metric | PyG InMemoryDataset | PyG On-Disk Dataset | LMDB (Meta AI) | FoldPipe (Ours) |
-| :--- | :--- | :--- | :--- | :--- |
-| **RAM Scaling** | **O(N)** (Crashes on 32GB) | **O(1)** | **O(1)** | **O(1)** (~1.5 GB) |
-| **Time-To-First-Batch** | **Infinite** (OOM Crash) | Slow (Disk Seek) | Fast | **18 Seconds** |
-| **Offline Conversion** | None | None | **Required** (Hours & 2x Storage) | **None** (Native `.pt`) |
-| **GPU Saturation** | 0.0% (Starved/Dead) | 10–30% (IOPS Bound) | ~95% | **~95%** (Async Stream) |
+| Pipeline | Local Storage Req | GPU Saturation | Notes |
+| :--- | :--- | :--- | :--- |
+| Eager Accumulation | > 600 GB | N/A (OOM Crash) | Baseline. Impractical for most researchers. |
+| **FoldPipe** | **0 GB** | **>90%** | $O(1)$ memory. Native `.pt` support. |
 
 ## Empirical Whitepaper Benchmark
 To prove the architecture's efficiency at eliminating network I/O bounds, we conducted a rigorous A/B benchmark on a Kaggle Hardware instance with a multi-terabyte trajectory dataset.
@@ -51,15 +49,22 @@ pip install -e .
 FoldPipe operates as a drop-in iterator. It handles the background threading and bounded-memory shard lifecycle automatically.
 
 ```python
-import torch
 from foldpipe import AsyncFoldPipeLoader
+from foldpipe.sources import GoogleDriveSource, HuggingFaceSource
 
-# Initialize the streaming loader
-loader = AsyncFoldPipeLoader(
-    drive_folder_id="1Few5wzRuuhlwbj4DJD9nkOP98t_QqZcz",
-    credentials_json="path/to/token.json",
-    batch_size=128
+# Option A: Stream from Google Drive
+source = GoogleDriveSource(
+    folder_id="1Few5wzRuuhlwbj4DJD9nkOP98t_QqZcz",
+    credentials_json="path/to/token.json"  # Handled automatically
 )
+
+# Option B: Stream from HuggingFace (Zero disk caching)
+# source = HuggingFaceSource(
+#     repo_id="username/prion-dataset",
+#     folder_path="trajectories"
+# )
+
+loader = AsyncFoldPipeLoader(source=source, batch_size=128)
 
 model = MyEquivariantNetwork().to('cuda')
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)

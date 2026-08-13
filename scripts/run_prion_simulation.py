@@ -22,7 +22,8 @@ def run_prion_test():
     dataset = PrionStreamer(raw_dir='./data/prion/raw')
     
     # 4. Initialize stream and pull first batch
-    batch = next(iter(dataset)).to(device)
+    loader = DataLoader(dataset, batch_size=1)
+    batch = next(iter(loader)).to(device)
     num_atoms = batch.z.shape[0]
     print(f"Structure 0 (1QLX) has {num_atoms} atoms.")
     
@@ -58,6 +59,7 @@ def run_prion_test():
         print(f"Predicted Forces (dY/dPos): {pred_neg_dy.shape} (Should match [num_atoms, 3])")
     except Exception as e:
         print(f"❌ FORWARD PASS FAILED: {e}")
+        raise
 
 if __name__ == "__main__":
     run_prion_test()
