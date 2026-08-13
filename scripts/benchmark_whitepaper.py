@@ -195,7 +195,7 @@ if __name__ == "__main__":
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
     
     # Left: RAM Leak vs Stable
-    ax1.plot(base_prof.time_history, base_prof.ram_history, color='red', label='InMemoryDataset (O(N) Accumulation)')
+    ax1.plot(base_prof.time_history, base_prof.ram_history, color='red', label='InMemoryDataset (OOM Leak)')
     ax1.plot(fp_deep_prof.time_history, fp_deep_prof.ram_history, color='green', label='FoldPipe (Bounded)')
     if crashed:
         ax1.scatter([base_prof.time_history[-1]], [base_prof.ram_history[-1]], color='darkred', s=150, marker='X', label='Real OOM')
