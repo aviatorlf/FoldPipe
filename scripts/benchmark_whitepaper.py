@@ -5,6 +5,7 @@ import psutil
 import torch
 import torch.nn as nn
 import threading
+import subprocess
 import matplotlib.pyplot as plt
 from foldpipe import AsyncFoldPipeLoader
 from googleapiclient.discovery import build
@@ -37,18 +38,22 @@ class Profiler:
             ram_gb = self.process.memory_info().rss / (1024 ** 3)
             self.ram_history.append(ram_gb)
             
-            # Simulated GPU utilization tracking based on active PyTorch compute
-            # For cross-platform CPU/GPU compatibility in this script:
-            self.gpu_history.append(getattr(self, 'current_util', 0.0))
+            util = 0.0
+            if torch.cuda.is_available():
+                try:
+                    res = subprocess.check_output(
+                        ["nvidia-smi", "--query-gpu=utilization.gpu", "--format=csv,noheader,nounits"],
+                        encoding='utf-8'
+                    )
+                    util = float(res.strip().split('\n')[0])
+                except Exception:
+                    pass
+            self.gpu_history.append(util)
             time.sleep(0.5)
-
-    def set_util(self, util):
-        self.current_util = util
 
     def start(self):
         self.running = True
         self.start_time = time.time()
-        self.set_util(0.0)
         self.thread = threading.Thread(target=self._poll)
         self.thread.start()
         
@@ -66,33 +71,28 @@ def get_tiny_model():
 def get_deep_model():
     """Compute > Network Fetch (Compute Bound)"""
     layers = [nn.Linear(3, 256), nn.ReLU()]
-    for _ in range(20):  # Extremely deep to guarantee compute saturation
+    for _ in range(60):  # Massively deep to guarantee compute saturation in a single pass
         layers.extend([nn.Linear(256, 256), nn.ReLU()])
     layers.append(nn.Linear(256, 3))
     return nn.Sequential(*layers).to(device)
 
-def symmetric_train_loop(model, chunk_tensor, epochs, profiler):
-    """Exact same PyTorch loop run by both Baseline and FoldPipe to ensure scientific validity."""
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
-    criterion = nn.MSELoss()
-    profiler.set_util(95.0)  # Simulating high GPU/CPU usage during math
-    for epoch in range(epochs):
-        for b in range(0, chunk_tensor.size(0), BATCH_SIZE):
-            mini_batch = chunk_tensor[b:b+BATCH_SIZE].to(device, non_blocking=True)
-            optimizer.zero_grad()
-            out = model(mini_batch)
-            loss = criterion(out, torch.zeros_like(out))
-            loss.backward()
-            optimizer.step()
-            
-            # Artificial sleep to simulate heavy CUDA kernels if running on fast M-series CPUs
-            if not torch.cuda.is_available():
-                time.sleep(0.01)
+def train_batch(model, optimizer, criterion, mini_batch):
+    """Exact identical training step run by both pipelines."""
+    mini_batch = mini_batch.to(device, non_blocking=True)
+    optimizer.zero_grad()
+    out = model(mini_batch)
+    loss = criterion(out, torch.zeros_like(out))
+    loss.backward()
+    optimizer.step()
+    
+    # Artificial sleep to simulate heavy CUDA kernels if running on fast M-series CPUs locally
+    if not torch.cuda.is_available():
+        time.sleep(0.01)
 
 # ---------------------------------------------------------
 # PHASE 1: BASELINE (IN MEMORY) OOM TEST
 # ---------------------------------------------------------
-def run_baseline_in_memory(drive_service, files, model, epochs):
+def run_baseline_in_memory(drive_service, files, model):
     print("\n--- BASELINE: PyG InMemoryDataset ---")
     profiler = Profiler()
     profiler.start()
@@ -100,10 +100,13 @@ def run_baseline_in_memory(drive_service, files, model, epochs):
     dataset_in_memory = []
     crashed = False
     
+    # Symmetrical optimizer instantiated ONCE
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+    criterion = nn.MSELoss()
+    
     try:
         for i, f in enumerate(files[:MAX_CHUNKS]):
             print(f"Baseline: Loading and Computing Chunk {i+1} / {MAX_CHUNKS}...")
-            profiler.set_util(0.0) # Downloading (Starved)
             request = drive_service.files().get_media(fileId=f['id'])
             fh = io.BytesIO()
             downloader = MediaIoBaseDownload(fh, request)
@@ -113,16 +116,19 @@ def run_baseline_in_memory(drive_service, files, model, epochs):
             fh.seek(0)
             tensor = torch.load(fh, map_location='cpu')
             
-            # SIMULATE OOM: If RAM hits 90% of system total, we trigger natural MemoryError 
-            # to protect the user's local machine from actually freezing.
+            # PROTECTIVE CUTOFF: If RAM hits 90% of system total, we trigger natural MemoryError 
+            # to protect the machine from actually freezing.
             if psutil.virtual_memory().percent > 90.0:
-                raise MemoryError("System RAM exhausted. OS Exit Code 137 imminent.")
+                raise MemoryError("System RAM exhausted.")
                 
             dataset_in_memory.append(tensor) # HOG RAM
-            symmetric_train_loop(model, tensor, epochs, profiler)
+            
+            # Single-pass execution of the chunk
+            for b in range(0, tensor.size(0), BATCH_SIZE):
+                train_batch(model, optimizer, criterion, tensor[b:b+BATCH_SIZE])
             
     except MemoryError as e:
-        print(f"[!] REAL OOM CAPTURED: {e}")
+        print(f"[!] Memory Safety Threshold Reached: {e}")
         crashed = True
         
     profiler.stop()
@@ -134,21 +140,25 @@ def run_baseline_in_memory(drive_service, files, model, epochs):
 # ---------------------------------------------------------
 # PHASE 2: FOLDPIPE (ASYNC STREAMING) TEST
 # ---------------------------------------------------------
-def run_foldpipe_stream(creds_json, files, model, epochs):
-    print(f"\n--- FOLDPIPE ASYNC STREAM (Epochs={epochs}) ---")
+def run_foldpipe_stream(creds_json, files, model):
+    print(f"\n--- FOLDPIPE ASYNC STREAM ---")
     profiler = Profiler()
     profiler.start()
+    
+    # Symmetrical optimizer instantiated ONCE
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+    criterion = nn.MSELoss()
     
     # Initialize the True AsyncFoldPipeLoader
     loader = AsyncFoldPipeLoader(drive_folder_id=DRIVE_FOLDER_ID, credentials_json=creds_json, batch_size=BATCH_SIZE)
     # Hack the loader to only fetch MAX_CHUNKS for the benchmark
     loader.files = files[:MAX_CHUNKS]
     
-    # The loader is a drop-in generator
-    for chunk_idx, chunk_tensor in enumerate(loader):
-        print(f"GPU Computing Chunk {chunk_idx+1}...")
-        symmetric_train_loop(model, chunk_tensor, epochs, profiler)
-        profiler.set_util(0.0) # Momentary drop if network is slower than compute
+    # The loader is a drop-in generator yielding continuous batches
+    for batch_idx, mini_batch in enumerate(loader):
+        if batch_idx % 200 == 0:
+            print(f"GPU Computing Batch {batch_idx+1}...")
+        train_batch(model, optimizer, criterion, mini_batch)
 
     profiler.stop()
     return profiler
@@ -175,38 +185,51 @@ if __name__ == "__main__":
     creds = Credentials.from_authorized_user_info(creds_json, scopes=['https://www.googleapis.com/auth/drive'])
     drive_service = build('drive', 'v3', credentials=creds)
     
+    # Pagination
     query = f"'{DRIVE_FOLDER_ID}' in parents and name contains 'checkpoint_batch_' and trashed = false"
-    results = drive_service.files().list(q=query, fields="files(id, name)").execute()
-    files = results.get('files', [])
+    files = []
+    page_token = None
+    while True:
+        results = drive_service.files().list(
+            q=query, 
+            fields="nextPageToken, files(id, name)", 
+            orderBy="name_natural",
+            pageToken=page_token
+        ).execute()
+        files.extend(results.get('files', []))
+        page_token = results.get('nextPageToken')
+        if not page_token:
+            break
     
     # 1. Baseline Test (Heavy Compute)
     print("Running Baseline...")
-    base_prof, crashed = run_baseline_in_memory(drive_service, files, get_deep_model(), epochs=10)
+    base_prof, crashed = run_baseline_in_memory(drive_service, files, get_deep_model())
     
     # 2. FoldPipe (Compute > I/O) -> Saturation
     print("Running FoldPipe (Compute Bound)...")
-    fp_deep_prof = run_foldpipe_stream(creds_json, files, get_deep_model(), epochs=10)
+    fp_deep_prof = run_foldpipe_stream(creds_json, files, get_deep_model())
     
     # 3. FoldPipe (Compute < I/O) -> Starvation
     print("Running FoldPipe (I/O Bound)...")
-    fp_tiny_prof = run_foldpipe_stream(creds_json, files, get_tiny_model(), epochs=1)
+    fp_tiny_prof = run_foldpipe_stream(creds_json, files, get_tiny_model())
     
     # Plotting
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
     
     # Left: RAM Leak vs Stable
-    ax1.plot(base_prof.time_history, base_prof.ram_history, color='red', label='InMemoryDataset (OOM Leak)')
+    # Maintained pedantic accuracy label requested previously
+    ax1.plot(base_prof.time_history, base_prof.ram_history, color='red', label='InMemoryDataset (O(N) Accumulation)')
     ax1.plot(fp_deep_prof.time_history, fp_deep_prof.ram_history, color='green', label='FoldPipe (Bounded)')
     if crashed:
-        ax1.scatter([base_prof.time_history[-1]], [base_prof.ram_history[-1]], color='darkred', s=150, marker='X', label='Real OOM')
+        ax1.scatter([base_prof.time_history[-1]], [base_prof.ram_history[-1]], color='darkred', s=150, marker='X', label='Memory Safety Cutoff')
     ax1.set_title("RAM Footprint")
     ax1.set_xlabel("Time")
     ax1.set_ylabel("RAM (GB)")
     ax1.legend()
     
     # Right: Compute-to-I/O Crossover
-    ax2.plot(fp_deep_prof.time_history, fp_deep_prof.gpu_history, color='green', alpha=0.8, label='Compute > I/O (95% Saturation)')
-    ax2.plot(fp_tiny_prof.time_history, fp_tiny_prof.gpu_history, color='orange', alpha=0.8, label='Compute < I/O (I/O Starvation)')
+    ax2.plot(fp_deep_prof.time_history, fp_deep_prof.gpu_history, color='green', alpha=0.8, label='Compute > I/O (Saturation)')
+    ax2.plot(fp_tiny_prof.time_history, fp_tiny_prof.gpu_history, color='orange', alpha=0.8, label='Compute < I/O (Starvation)')
     ax2.set_title("FoldPipe Latency Masking (Compute-to-I/O Ratio)")
     ax2.set_xlabel("Time")
     ax2.set_ylabel("Compute Utilization (%)")

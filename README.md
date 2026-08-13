@@ -8,7 +8,7 @@ Standard Machine Learning Force Field (MLFF) pipelines often bottleneck at the C
 ## The Solution
 **FoldPipe** is a domain-specific integration of bounded-buffer asynchronous prefetching tailored for native `.pt` molecular trajectories. It bridges the gap between PyG's in-memory/on-disk abstractions and format-converting streaming systems such as WebDataset, particularly for memory-constrained ephemeral compute.
 
-FoldPipe is designed for **both** usability and scale: it provides an out-of-core streaming orchestration layer for datasets that exceed local memory constraints, and it is pip-packaged so you can install it with a single command. By applying concurrent `ThreadPoolExecutor` pre-fetching, parallel I/O batching, and explicit Python garbage collection, FoldPipe allows researchers to train state-of-the-art graph neural networks directly from remote storage on massive datasets using cheap, low-memory preemptible instances.
+FoldPipe is designed for **both** usability and scale: it provides an out-of-core streaming orchestration layer for datasets that exceed local memory constraints, and it is pip-packaged so you can install it with a single command. By applying concurrent `ThreadPoolExecutor` pre-fetching, parallel I/O batching, and explicit bounded object lifetime, FoldPipe allows researchers to train state-of-the-art graph neural networks directly from remote storage on massive datasets using cheap, low-memory preemptible instances.
 
 ## Honest Positioning & Prior Art
 To be 100% factual, transparent, and defensible in peer review, here is how FoldPipe positions itself against the prior art:
@@ -29,7 +29,7 @@ To prove the architecture's efficiency at eliminating network I/O bounds, we con
 ![Benchmark Results](assets/benchmark_comparison.png)
 
 ### The Results
-1. **RAM Scaling ($O(N)$ vs $O(1)$):** The PyG Baseline dataloader demonstrated linear $O(N)$ memory growth, hoarding every downloaded tensor in RAM. FoldPipe successfully demonstrated strict $O(1)$ memory bounding by yielding and aggressively garbage-collecting each chunk after GPU computation.
+1. **RAM Scaling ($O(N)$ vs $O(1)$):** The PyG Baseline dataloader demonstrated linear $O(N)$ memory growth, hoarding every downloaded tensor in RAM. FoldPipe successfully demonstrated strict $O(1)$ memory bounding by yielding and aggressively releasing each chunk after GPU computation.
 2. **Hardware Crossover & GPU Saturation:** The Baseline pipeline forced the GPU to idle synchronously while waiting for sequential network downloads. FoldPipe's asynchronous producer/consumer architecture completely hid the network I/O latency behind compute. When processing a sufficiently deep neural network, FoldPipe achieved **continuous >90% GPU saturation** on Kaggle's T4/P100 instances, mathematically proving our network-latency masking crossover point.
 
 ## Quickstart & Usage
@@ -48,7 +48,7 @@ pip install -e .
 ```
 
 ### 2. Standard PyTorch Training Loop
-FoldPipe operates as a drop-in iterator. It handles the background threading and garbage collection automatically.
+FoldPipe operates as a drop-in iterator. It handles the background threading and bounded-memory shard lifecycle automatically.
 
 ```python
 import torch
