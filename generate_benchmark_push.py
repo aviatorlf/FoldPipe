@@ -20,7 +20,7 @@ nb = {
    "metadata": {},
    "outputs": [],
    "source": [
-    "!pip install torch==2.3.1 torchvision torchaudio google-api-python-client\n"
+    "!pip install torch==2.3.1 torchvision torchaudio google-api-python-client git+https://github.com/aviatorlf/FoldPipe.git\n"
    ]
   },
   {

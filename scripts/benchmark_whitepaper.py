@@ -102,6 +102,7 @@ def run_baseline_in_memory(drive_service, files, model, epochs):
     
     try:
         for i, f in enumerate(files[:MAX_CHUNKS]):
+            print(f"Baseline: Loading and Computing Chunk {i+1} / {MAX_CHUNKS}...")
             profiler.set_util(0.0) # Downloading (Starved)
             request = drive_service.files().get_media(fileId=f['id'])
             fh = io.BytesIO()
@@ -156,14 +157,17 @@ def run_foldpipe_stream(creds_json, files, model, epochs):
 # EXECUTION & PLOTTING
 # ---------------------------------------------------------
 if __name__ == "__main__":
+    import sys
     secret_path = "/kaggle/input/gcp-secret-dataset/token.json"
     if not os.path.exists(secret_path):
-        possible_paths = glob.glob('**/token.json', recursive=True)
+        possible_paths = glob.glob('/kaggle/input/**/token.json', recursive=True)
+        if not possible_paths:
+            possible_paths = glob.glob('**/token.json', recursive=True)
         secret_path = possible_paths[0] if possible_paths else None
         
     if not secret_path:
         print("Requires token.json for Google Drive OAuth.")
-        exit(1)
+        sys.exit(1)
         
     with open(secret_path, 'r') as f:
         creds_json = json.load(f)
