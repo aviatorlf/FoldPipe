@@ -8,15 +8,7 @@ import threading
 import subprocess
 import matplotlib.pyplot as plt
 from foldpipe import AsyncFoldPipeLoader
-from foldpipe.sources import GoogleDriveSource
-from googleapiclient.discovery import build
-from google.oauth2.credentials import Credentials
-from torch_geometric.nn.models import SchNet
-import glob
-import io
-from googleapiclient.http import MediaIoBaseDownload
-
-DRIVE_FOLDER_ID = "1Few5wzRuuhlwbj4DJD9nkOP98t_QqZcz"
+from foldpipe.sources import HuggingFaceSource
 MAX_CHUNKS = 15  # Limit to avoid running all day
 BATCH_SIZE = 128
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -127,12 +119,12 @@ def run_baseline_in_memory(drive_service, files, model):
     try:
         for i, f in enumerate(files[:MAX_CHUNKS]):
             print(f"Eager Baseline: Loading and Computing Chunk {i+1} / {MAX_CHUNKS}...")
-            request = drive_service.files().get_media(fileId=f['id'])
-            fh = io.BytesIO()
-            downloader = MediaIoBaseDownload(fh, request)
-            done = False
-            while done is False:
-                status, done = downloader.next_chunk()
+            request_url = f"https://huggingface.co/datasets/aviatorlf/prion-dataset/resolve/main/{f}"
+            headers = {"Authorization": f"Bearer {os.environ.get('HF_TOKEN')}"} if os.environ.get("HF_TOKEN") else {}
+            import requests
+            response = requests.get(request_url, headers=headers, stream=True)
+            response.raise_for_status()
+            fh = io.BytesIO(response.content)
             fh.seek(0)
             tensor = torch.load(fh, map_location='cpu')
             
@@ -167,12 +159,12 @@ def run_sequential_stream(drive_service, files, model):
     
     for i, f in enumerate(files[:MAX_CHUNKS]):
         print(f"Sequential Streaming: Loading Chunk {i+1} / {MAX_CHUNKS}...")
-        request = drive_service.files().get_media(fileId=f['id'])
-        fh = io.BytesIO()
-        downloader = MediaIoBaseDownload(fh, request)
-        done = False
-        while done is False:
-            status, done = downloader.next_chunk()
+        request_url = f"https://huggingface.co/datasets/aviatorlf/prion-dataset/resolve/main/{f}"
+        headers = {"Authorization": f"Bearer {os.environ.get('HF_TOKEN')}"} if os.environ.get("HF_TOKEN") else {}
+        import requests
+        response = requests.get(request_url, headers=headers, stream=True)
+        response.raise_for_status()
+        fh = io.BytesIO(response.content)
         fh.seek(0)
         tensor = torch.load(fh, map_location='cpu')
         
@@ -188,7 +180,7 @@ def run_sequential_stream(drive_service, files, model):
 # ---------------------------------------------------------
 # PHASE 3: FOLDPIPE (ASYNC STREAMING) TEST
 # ---------------------------------------------------------
-def run_foldpipe_stream(creds_json, files, model):
+def run_foldpipe_stream(files, model):
     print(f"\n--- FOLDPIPE ASYNC STREAM ---")
     profiler = Profiler()
     profiler.start()
@@ -196,7 +188,7 @@ def run_foldpipe_stream(creds_json, files, model):
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     criterion = nn.MSELoss()
     
-    source = GoogleDriveSource(folder_id=DRIVE_FOLDER_ID, credentials_json=creds_json)
+    source = HuggingFaceSource(repo_id="aviatorlf/prion-dataset", token=os.environ.get("HF_TOKEN"))
     loader = AsyncFoldPipeLoader(source=source, batch_size=BATCH_SIZE)
     loader.files = files[:MAX_CHUNKS]
     
@@ -212,39 +204,8 @@ def run_foldpipe_stream(creds_json, files, model):
 # EXECUTION & PLOTTING
 # ---------------------------------------------------------
 if __name__ == "__main__":
-    import sys
-    secret_path = "/kaggle/input/gcp-secret-dataset/token.json"
-    if not os.path.exists(secret_path):
-        possible_paths = glob.glob('/kaggle/input/**/token.json', recursive=True)
-        if not possible_paths:
-            possible_paths = glob.glob('**/token.json', recursive=True)
-        secret_path = possible_paths[0] if possible_paths else None
-        
-    if not secret_path:
-        print("Requires token.json for Google Drive OAuth.")
-        sys.exit(1)
-        
-    with open(secret_path, 'r') as f:
-        creds_json = json.load(f)
-        
-    creds = Credentials.from_authorized_user_info(creds_json, scopes=['https://www.googleapis.com/auth/drive.readonly'])
-    drive_service = build('drive', 'v3', credentials=creds)
-    
-    # Pagination
-    query = f"'{DRIVE_FOLDER_ID}' in parents and name contains 'checkpoint_batch_' and trashed = false"
-    files = []
-    page_token = None
-    while True:
-        results = drive_service.files().list(
-            q=query, 
-            fields="nextPageToken, files(id, name)", 
-            orderBy="name_natural",
-            pageToken=page_token
-        ).execute()
-        files.extend(results.get('files', []))
-        page_token = results.get('nextPageToken')
-        if not page_token:
-            break
+    source = HuggingFaceSource(repo_id="aviatorlf/prion-dataset", token=os.environ.get("HF_TOKEN"))
+    files = source.get_files()
             
     # We benchmark against both the Synthetic Deep Model (to prove I/O crossover) 
     # and the Real MLFF Workload (SchNet) to prove practical relevance.
@@ -262,15 +223,15 @@ if __name__ == "__main__":
         
         # 1. Baseline A (Eager Accumulation)
         print("Running Baseline A (Eager Accumulation)...")
-        eager_prof, crashed = run_baseline_in_memory(drive_service, files, active_model)
+        eager_prof, crashed = run_baseline_in_memory(None, files, active_model)
         
         # 2. Baseline B (Sequential Streaming)
         print("Running Baseline B (Sequential Streaming)...")
-        seq_prof = run_sequential_stream(drive_service, files, active_model)
+        seq_prof = run_sequential_stream(None, files, active_model)
         
         # 3. FoldPipe (Async Streaming)
         print("Running FoldPipe (Async Streaming)...")
-        fp_prof = run_foldpipe_stream(creds_json, files, active_model)
+        fp_prof = run_foldpipe_stream(files, active_model)
         
         ax1, ax2 = axes[row_idx]
         
