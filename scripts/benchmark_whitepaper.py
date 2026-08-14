@@ -9,6 +9,8 @@ import subprocess
 import matplotlib.pyplot as plt
 from foldpipe import AsyncFoldPipeLoader
 from foldpipe.sources import HuggingFaceSource
+from torch_geometric.nn.models import SchNet
+import io
 MAX_CHUNKS = 15  # Limit to avoid running all day
 BATCH_SIZE = 128
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
