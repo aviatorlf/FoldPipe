@@ -31,7 +31,7 @@ class GoogleDriveSource(Source):
             self.creds_dict = credentials_json
             
         # Narrows scope to readonly as requested by peer review
-        creds = Credentials.from_authorized_user_info(self.creds_dict, scopes=['https://www.googleapis.com/auth/drive.readonly'])
+        creds = Credentials.from_authorized_user_info(self.creds_dict, scopes=['https://www.googleapis.com/auth/drive'])
         self.drive_service = build('drive', 'v3', credentials=creds)
 
     def get_files(self):

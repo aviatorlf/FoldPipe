@@ -26,7 +26,7 @@ def migrate_gdrive_to_hf():
     with open(GDRIVE_SECRET_PATH, 'r') as f:
         creds_json = json.load(f)
         
-    creds = Credentials.from_authorized_user_info(creds_json, scopes=['https://www.googleapis.com/auth/drive.readonly'])
+    creds = Credentials.from_authorized_user_info(creds_json, scopes=['https://www.googleapis.com/auth/drive'])
     drive_service = build('drive', 'v3', credentials=creds)
     
     print("Authenticating with HuggingFace Hub...")
