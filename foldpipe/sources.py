@@ -1,5 +1,6 @@
 import io
 import json
+import time
 import torch
 import requests
 from abc import ABC, abstractmethod
@@ -10,8 +11,8 @@ from huggingface_hub import HfFileSystem
 
 class Source(ABC):
     @abstractmethod
-    def get_files(self):
-        """Returns a list of identifiers for the chunk files."""
+    def iter_files(self):
+        """Yields identifiers for the chunk files lazily to strictly bound memory."""
         pass
 
     @abstractmethod
@@ -34,8 +35,7 @@ class GoogleDriveSource(Source):
         creds = Credentials.from_authorized_user_info(self.creds_dict, scopes=['https://www.googleapis.com/auth/drive'])
         self.drive_service = build('drive', 'v3', credentials=creds)
 
-    def get_files(self):
-        files = []
+    def iter_files(self):
         query = f"'{self.folder_id}' in parents and name contains 'checkpoint_batch_' and trashed = false"
         page_token = None
         while True:
@@ -45,11 +45,13 @@ class GoogleDriveSource(Source):
                 orderBy="name_natural",
                 pageToken=page_token
             ).execute()
-            files.extend(results.get('files', []))
+            
+            for file_info in results.get('files', []):
+                yield file_info
+                
             page_token = results.get('nextPageToken')
             if not page_token:
                 break
-        return files
 
     def download_chunk(self, identifier):
         file_id = identifier['id']
@@ -70,7 +72,7 @@ class HuggingFaceSource(Source):
         self.token = token
         self.fs = HfFileSystem(token=token)
 
-    def get_files(self):
+    def iter_files(self):
         path = f"datasets/{self.repo_id}/{self.folder_path}".strip("/")
         files_info = self.fs.ls(path)
         # Filter for checkpoint files and return the full paths
@@ -82,7 +84,9 @@ class HuggingFaceSource(Source):
             return [int(c) if c.isdigit() else c for c in re.split(r'(\d+)', text)]
         files.sort(key=natural_keys)
         
-        return files
+        # Yield sequentially instead of loading all names into consumer RAM at once
+        for file_name in files:
+            yield file_name
 
     def download_chunk(self, identifier):
         file_path = identifier
@@ -102,3 +106,22 @@ class HuggingFaceSource(Source):
         fh = io.BytesIO(response.content)
         fh.seek(0)
         return torch.load(fh, map_location='cpu')
+
+class SyntheticLatencySource(Source):
+    """
+    A controlled source that allows configuring exact artificial network latency
+    and returns fixed-size dummy tensors. Crucial for isolated mechanism experiments.
+    """
+    def __init__(self, num_chunks=15, latency_ms=100, chunk_size=20000):
+        self.num_chunks = num_chunks
+        self.latency_ms = latency_ms
+        self.chunk_size = chunk_size
+        
+    def iter_files(self):
+        for i in range(self.num_chunks):
+            yield f"synthetic_chunk_{i}.pt"
+            
+    def download_chunk(self, identifier):
+        if self.latency_ms > 0:
+            time.sleep(self.latency_ms / 1000.0)
+        return torch.randn(self.chunk_size, 3)

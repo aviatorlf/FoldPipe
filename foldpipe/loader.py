@@ -9,24 +9,30 @@ class AsyncFoldPipeLoader:
     def __init__(self, source, batch_size=128):
         self.source = source
         self.batch_size = batch_size
-        self.files = self.source.get_files()
+        self.file_iterator = self.source.iter_files()
 
     def __iter__(self):
         """Consumer pipeline."""
-        if not self.files:
+        try:
+            first_file = next(self.file_iterator)
+        except StopIteration:
             return
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
             # Kick off the prefetch for Chunk 0
-            future_chunk = executor.submit(self.source.download_chunk, self.files[0])
+            future_chunk = executor.submit(self.source.download_chunk, first_file)
             
-            for i in range(len(self.files)):
+            while True:
                 # Block only if GPU is faster than network
                 chunk_tensor = future_chunk.result()
                 
-                # Kick off prefetch for Chunk N+1 immediately
-                if i + 1 < len(self.files):
-                    future_chunk = executor.submit(self.source.download_chunk, self.files[i+1])
+                try:
+                    next_file = next(self.file_iterator)
+                    # Kick off prefetch for Chunk N+1 immediately
+                    future_chunk = executor.submit(self.source.download_chunk, next_file)
+                    has_next = True
+                except StopIteration:
+                    has_next = False
                 
                 # Yield batches to the GPU
                 for b in range(0, chunk_tensor.size(0), self.batch_size):
@@ -34,3 +40,6 @@ class AsyncFoldPipeLoader:
                 
                 # Explicitly delete the chunk (relying on Python GC for O(1) bound)
                 del chunk_tensor
+                
+                if not has_next:
+                    break
