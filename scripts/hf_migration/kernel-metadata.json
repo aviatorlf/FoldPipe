@@ -1,0 +1,14 @@
+{
+  "id": "dhirenkhatri/foldpipe-hf-migration",
+  "title": "FoldPipe HF Migration",
+  "code_file": "migrate.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": "true",
+  "enable_gpu": "false",
+  "enable_internet": "true",
+  "dataset_sources": ["dhirenkhatri/gcp-secret-dataset"],
+  "competition_sources": [],
+  "kernel_sources": [],
+  "model_sources": []
+}
