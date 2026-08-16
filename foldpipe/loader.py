@@ -9,12 +9,12 @@ class AsyncFoldPipeLoader:
     def __init__(self, source, batch_size=128):
         self.source = source
         self.batch_size = batch_size
-        self.file_iterator = self.source.iter_files()
 
     def __iter__(self):
         """Consumer pipeline."""
+        file_iterator = self.source.iter_files()
         try:
-            first_file = next(self.file_iterator)
+            first_file = next(file_iterator)
         except StopIteration:
             return
 
@@ -27,7 +27,7 @@ class AsyncFoldPipeLoader:
                 chunk_tensor = future_chunk.result()
                 
                 try:
-                    next_file = next(self.file_iterator)
+                    next_file = next(file_iterator)
                     # Kick off prefetch for Chunk N+1 immediately
                     future_chunk = executor.submit(self.source.download_chunk, next_file)
                     has_next = True

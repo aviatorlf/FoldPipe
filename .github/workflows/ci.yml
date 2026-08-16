@@ -14,10 +14,10 @@ jobs:
         python-version: ["3.9", "3.10", "3.11"]
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
         
@@ -35,8 +35,7 @@ jobs:
         # exit-zero treats all errors as warnings
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
         
-    - name: Run benchmark (CPU mode)
+    - name: Run tests
       run: |
-        # Run a simple sanity check on CPU to ensure no syntax/import errors
-        python -c "from foldpipe import AsyncFoldPipeLoader, PrionStreamer"
-        python scripts/run_prion_simulation.py --cpu-only
+        pip install pytest pytest-mock
+        pytest -v tests/

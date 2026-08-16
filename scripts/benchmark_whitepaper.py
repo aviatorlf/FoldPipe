@@ -68,6 +68,18 @@ class Profiler:
 # ---------------------------------------------------------
 # MODELS (SYMMETRIC WORKLOADS)
 # ---------------------------------------------------------
+class LimitedSource:
+    """Wraps any source to artificially limit the number of shards yielded (useful for bounded benchmarks)."""
+    def __init__(self, source, max_chunks):
+        self.source = source
+        self.max_chunks = max_chunks
+
+    def iter_files(self):
+        return itertools.islice(self.source.iter_files(), self.max_chunks)
+
+    def download_chunk(self, identifier):
+        return self.source.download_chunk(identifier)
+
 def get_tiny_model():
     """Compute < Network Fetch (I/O Bound)"""
     return nn.Sequential(nn.Linear(3, 16), nn.Linear(16, 3)).to(device)
@@ -200,9 +212,8 @@ def run_foldpipe_stream(model, initial_state_dict):
     start_t = time.time()
     
     source = HuggingFaceSource(repo_id="aviatorlf/prion-dataset", token=os.environ.get("HF_TOKEN"))
-    loader = AsyncFoldPipeLoader(source=source, batch_size=BATCH_SIZE)
-    # Bound the iterator for strict O(1) tracking
-    loader.file_iterator = itertools.islice(loader.file_iterator, MAX_CHUNKS)
+    limited_source = LimitedSource(source, MAX_CHUNKS)
+    loader = AsyncFoldPipeLoader(source=limited_source, batch_size=BATCH_SIZE)
     
     for batch_idx, mini_batch in enumerate(loader):
         train_batch(model, optimizer, criterion, mini_batch)

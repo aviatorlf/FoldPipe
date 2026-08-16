@@ -32,7 +32,7 @@ class GoogleDriveSource(Source):
             self.creds_dict = credentials_json
             
         # Narrows scope to readonly as requested by peer review
-        creds = Credentials.from_authorized_user_info(self.creds_dict, scopes=['https://www.googleapis.com/auth/drive'])
+        creds = Credentials.from_authorized_user_info(self.creds_dict, scopes=['https://www.googleapis.com/auth/drive.readonly'])
         self.drive_service = build('drive', 'v3', credentials=creds)
 
     def iter_files(self):
@@ -65,28 +65,29 @@ class GoogleDriveSource(Source):
         return torch.load(fh, map_location='cpu')
 
 
+from huggingface_hub import HfFileSystem, HfApi
+
 class HuggingFaceSource(Source):
     def __init__(self, repo_id, folder_path="", token=None):
         self.repo_id = repo_id
         self.folder_path = folder_path.strip("/")
         self.token = token
         self.fs = HfFileSystem(token=token)
+        self.api = HfApi(token=token)
 
     def iter_files(self):
-        path = f"datasets/{self.repo_id}/{self.folder_path}".strip("/")
-        files_info = self.fs.ls(path)
-        # Filter for checkpoint files and return the full paths
-        files = [f["name"] for f in files_info if "checkpoint_batch_" in f["name"]]
-        
-        # Sort naturally (PyTorch style)
-        import re
-        def natural_keys(text):
-            return [int(c) if c.isdigit() else c for c in re.split(r'(\d+)', text)]
-        files.sort(key=natural_keys)
-        
-        # Yield sequentially instead of loading all names into consumer RAM at once
-        for file_name in files:
-            yield file_name
+        # Generate items completely lazily directly from the Hugging Face API
+        path_in_repo = self.folder_path if self.folder_path else None
+        tree_generator = self.api.list_repo_tree(
+            repo_id=self.repo_id,
+            repo_type="dataset",
+            path_in_repo=path_in_repo,
+            recursive=False,
+            expand=False
+        )
+        for item in tree_generator:
+            if "checkpoint_batch_" in item.rfilename:
+                yield item.rfilename
 
     def download_chunk(self, identifier):
         file_path = identifier
@@ -99,11 +100,15 @@ class HuggingFaceSource(Source):
         if self.token:
             headers["Authorization"] = f"Bearer {self.token}"
             
-        # Stream directly to RAM via requests, completely avoiding local disk cache
+        # Stream directly to RAM via requests, avoiding local disk cache and double-materialization
         response = requests.get(url, headers=headers, stream=True)
         response.raise_for_status()
         
-        fh = io.BytesIO(response.content)
+        fh = io.BytesIO()
+        for block in response.iter_content(chunk_size=1024 * 1024):
+            if block:
+                fh.write(block)
+                
         fh.seek(0)
         return torch.load(fh, map_location='cpu')
 
