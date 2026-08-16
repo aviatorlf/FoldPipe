@@ -3,6 +3,7 @@ import json
 import time
 import torch
 import requests
+from urllib.parse import quote
 from abc import ABC, abstractmethod
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
@@ -68,10 +69,19 @@ class GoogleDriveSource(Source):
 from huggingface_hub import HfFileSystem, HfApi
 
 class HuggingFaceSource(Source):
-    def __init__(self, repo_id, folder_path="", token=None):
+    def __init__(
+        self,
+        repo_id,
+        folder_path="",
+        token=None,
+        revision=None,
+        transfer_observer=None,
+    ):
         self.repo_id = repo_id
         self.folder_path = folder_path.strip("/")
         self.token = token
+        self.revision = revision
+        self.transfer_observer = transfer_observer
         self.fs = HfFileSystem(token=token)
         self.api = HfApi(token=token)
 
@@ -82,6 +92,7 @@ class HuggingFaceSource(Source):
             repo_id=self.repo_id,
             repo_type="dataset",
             path_in_repo=path_in_repo,
+            revision=self.revision,
             recursive=False,
             expand=False
         )
@@ -95,22 +106,43 @@ class HuggingFaceSource(Source):
         if file_path.startswith(f"datasets/{self.repo_id}/"):
             file_path = file_path[len(f"datasets/{self.repo_id}/"):]
             
-        url = f"https://huggingface.co/datasets/{self.repo_id}/resolve/main/{file_path}"
+        revision = quote(self.revision or "main", safe="")
+        url = f"https://huggingface.co/datasets/{self.repo_id}/resolve/{revision}/{file_path}"
         headers = {}
         if self.token:
             headers["Authorization"] = f"Bearer {self.token}"
-            
-        # Stream directly to RAM via requests, avoiding local disk cache and double-materialization
-        response = requests.get(url, headers=headers, stream=True)
-        response.raise_for_status()
-        
-        fh = io.BytesIO()
-        for block in response.iter_content(chunk_size=1024 * 1024):
-            if block:
-                fh.write(block)
-                
-        fh.seek(0)
-        return torch.load(fh, map_location='cpu', weights_only=False)
+
+        event = {
+            "identifier": identifier,
+            "download_start": time.perf_counter(),
+            "download_finish": None,
+            "deserialize_finish": None,
+            "bytes_downloaded": 0,
+        }
+
+        try:
+            # Stream directly to RAM via requests, avoiding local disk cache and
+            # double-materialization. Count payload bytes for benchmark tracing.
+            response = requests.get(url, headers=headers, stream=True)
+            response.raise_for_status()
+
+            fh = io.BytesIO()
+            for block in response.iter_content(chunk_size=1024 * 1024):
+                if block:
+                    event["bytes_downloaded"] += len(block)
+                    fh.write(block)
+
+            event["download_finish"] = time.perf_counter()
+            fh.seek(0)
+            chunk = torch.load(fh, map_location='cpu', weights_only=False)
+            event["deserialize_finish"] = time.perf_counter()
+            return chunk
+        except Exception as exc:
+            event["error"] = type(exc).__name__
+            raise
+        finally:
+            if self.transfer_observer is not None:
+                self.transfer_observer(event.copy())
 
 class SyntheticLatencySource(Source):
     """

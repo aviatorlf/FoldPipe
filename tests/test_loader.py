@@ -48,6 +48,62 @@ class TestGoogleDriveSource:
         kwargs = mock_files.list.call_args_list[1][1]
         assert kwargs.get('pageToken') == 'token_abc'
 
+
+class TestHuggingFaceSource:
+    @patch('foldpipe.sources.torch.load', return_value=['decoded'])
+    @patch('foldpipe.sources.requests.get')
+    def test_transfer_observer_reports_payload_without_leaking_credentials(
+        self, mock_get, mock_torch_load
+    ):
+        from foldpipe.sources import HuggingFaceSource
+
+        response = MagicMock()
+        response.iter_content.return_value = [b'ab', b'', b'cde']
+        mock_get.return_value = response
+        observer = MagicMock()
+        source = HuggingFaceSource(
+            'owner/private-dataset', token='private-token', transfer_observer=observer
+        )
+
+        assert source.download_chunk('checkpoint_batch_0000.pt') == ['decoded']
+
+        response.raise_for_status.assert_called_once_with()
+        observer.assert_called_once()
+        event = observer.call_args.args[0]
+        assert event['identifier'] == 'checkpoint_batch_0000.pt'
+        assert event['bytes_downloaded'] == 5
+        assert event['download_start'] <= event['download_finish']
+        assert event['download_finish'] <= event['deserialize_finish']
+        assert 'private-token' not in repr(event)
+
+    @patch('foldpipe.sources.torch.load', return_value=['decoded'])
+    @patch('foldpipe.sources.requests.get')
+    def test_revision_pins_download_url(self, mock_get, mock_torch_load):
+        from foldpipe.sources import HuggingFaceSource
+
+        response = MagicMock()
+        response.iter_content.return_value = [b'payload']
+        mock_get.return_value = response
+        source = HuggingFaceSource(
+            'owner/private-dataset', revision='refs/pr/7', token='private-token'
+        )
+
+        source.download_chunk('checkpoint_batch_0000.pt')
+
+        url = mock_get.call_args.args[0]
+        assert '/resolve/refs%2Fpr%2F7/checkpoint_batch_0000.pt' in url
+
+    @patch('foldpipe.sources.HfApi')
+    @patch('foldpipe.sources.HfFileSystem')
+    def test_revision_pins_tree_listing(self, mock_fs, mock_api):
+        from foldpipe.sources import HuggingFaceSource
+
+        mock_api.return_value.list_repo_tree.return_value = []
+        source = HuggingFaceSource('owner/dataset', revision='abc123')
+
+        assert list(source.iter_files()) == []
+        assert mock_api.return_value.list_repo_tree.call_args.kwargs['revision'] == 'abc123'
+
 class TestAsyncFoldPipeLoader:
     def test_empty_source(self):
         source = SyntheticLatencySource(num_chunks=0, latency_ms=0)
