@@ -62,7 +62,7 @@ class GoogleDriveSource(Source):
         while done is False:
             status, done = downloader.next_chunk()
         fh.seek(0)
-        return torch.load(fh, map_location='cpu')
+        return torch.load(fh, map_location='cpu', weights_only=False)
 
 
 from huggingface_hub import HfFileSystem, HfApi
@@ -110,7 +110,7 @@ class HuggingFaceSource(Source):
                 fh.write(block)
                 
         fh.seek(0)
-        return torch.load(fh, map_location='cpu')
+        return torch.load(fh, map_location='cpu', weights_only=False)
 
 class SyntheticLatencySource(Source):
     """

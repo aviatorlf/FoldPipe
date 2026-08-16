@@ -147,7 +147,7 @@ def run_sequential_stream(files, model, initial_state_dict):
         response.raise_for_status()
         fh = io.BytesIO(response.content)
         fh.seek(0)
-        chunk_list = torch.load(fh, map_location='cpu')
+        chunk_list = torch.load(fh, map_location='cpu', weights_only=False)
         
         for mini_batch in pyg_batch_fn(chunk_list, batch_size=32):
             train_batch(model, optimizer, criterion, mini_batch)
