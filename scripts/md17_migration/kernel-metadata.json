@@ -1,0 +1,13 @@
+{
+  "id": "aviatorlf/migrate-md17-shards",
+  "title": "migrate-md17-shards",
+  "code_file": "migrate_md17.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": "true",
+  "enable_gpu": "false",
+  "enable_internet": "true",
+  "dataset_sources": [],
+  "competition_sources": [],
+  "kernel_sources": []
+}

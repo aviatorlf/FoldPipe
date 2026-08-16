@@ -6,9 +6,15 @@ class AsyncFoldPipeLoader:
     Downloads native PyTorch .pt chunk files via a generic Source backend in the background.
     Hides network I/O latency behind GPU computation.
     """
-    def __init__(self, source, batch_size=128):
+    def __init__(self, source, batch_size=128, batch_fn=None):
         self.source = source
         self.batch_size = batch_size
+        self.batch_fn = batch_fn or self._default_batch_fn
+
+    def _default_batch_fn(self, chunk):
+        """Default tensor slicing for symmetric tensors."""
+        for b in range(0, chunk.size(0), self.batch_size):
+            yield chunk[b:b+self.batch_size]
 
     def __iter__(self):
         """Consumer pipeline."""
@@ -35,8 +41,8 @@ class AsyncFoldPipeLoader:
                     has_next = False
                 
                 # Yield batches to the GPU
-                for b in range(0, chunk_tensor.size(0), self.batch_size):
-                    yield chunk_tensor[b:b+self.batch_size]
+                for batch in self.batch_fn(chunk_tensor):
+                    yield batch
                 
                 # Explicitly delete the chunk (relying on Python GC for O(1) bound)
                 del chunk_tensor
