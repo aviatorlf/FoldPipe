@@ -71,3 +71,91 @@ class TestAsyncFoldPipeLoader:
         batches_epoch2 = list(loader)
         assert len(batches_epoch2) == 8
         assert batches_epoch2[0].shape == (100, 3)
+
+    def test_single_shard(self):
+        source = SyntheticLatencySource(num_chunks=1, latency_ms=0, chunk_size=300)
+        loader = AsyncFoldPipeLoader(source=source, batch_size=150)
+        batches = list(loader)
+        assert len(batches) == 2
+
+    def test_non_divisible_batch_size(self):
+        source = SyntheticLatencySource(num_chunks=1, latency_ms=0, chunk_size=100)
+        loader = AsyncFoldPipeLoader(source=source, batch_size=30)
+        batches = list(loader)
+        # Should yield sizes: 30, 30, 30, 10
+        assert len(batches) == 4
+        assert batches[-1].shape == (10, 3)
+
+    def test_custom_batch_fn(self):
+        source = SyntheticLatencySource(num_chunks=1, latency_ms=0, chunk_size=100)
+        # Custom batch function that returns just a string
+        def dummy_batch_fn(chunk):
+            yield "batch1"
+            yield "batch2"
+            
+        loader = AsyncFoldPipeLoader(source=source, batch_size=10, batch_fn=dummy_batch_fn)
+        batches = list(loader)
+        assert len(batches) == 2
+        assert batches[0] == "batch1"
+        assert batches[1] == "batch2"
+
+    def test_source_download_exception_propagates(self):
+        class BrokenDownloadSource(SyntheticLatencySource):
+            def download_chunk(self, identifier):
+                raise ValueError("Simulated network failure")
+                
+        source = BrokenDownloadSource(num_chunks=2)
+        loader = AsyncFoldPipeLoader(source=source, batch_size=10)
+        
+        with pytest.raises(ValueError, match="Simulated network failure"):
+            list(loader)
+
+    def test_source_iteration_exception(self):
+        class BrokenIterSource(SyntheticLatencySource):
+            def iter_files(self):
+                yield "file1"
+                raise RuntimeError("Failed to list files")
+                
+        source = BrokenIterSource()
+        loader = AsyncFoldPipeLoader(source=source, batch_size=10)
+        
+        with pytest.raises(RuntimeError, match="Failed to list files"):
+            list(loader)
+
+    def test_prefetch_actually_overlaps(self):
+        import time
+        
+        class TracingSource(SyntheticLatencySource):
+            def __init__(self, *args, **kwargs):
+                super().__init__(*args, **kwargs)
+                self.download_start_times = []
+                self.download_end_times = []
+                
+            def download_chunk(self, identifier):
+                self.download_start_times.append(time.time())
+                time.sleep(0.1) # Simulate 100ms network latency
+                chunk = torch.randn(10, 3)
+                self.download_end_times.append(time.time())
+                return chunk
+
+        source = TracingSource(num_chunks=2)
+        loader = AsyncFoldPipeLoader(source=source, batch_size=10)
+        iterator = iter(loader)
+        
+        # 1. Ask for first batch. The background thread will fetch chunk 0, block us until chunk 0 is ready.
+        #    Once chunk 0 is yielded to us, the background thread IMMEDIATELY starts fetching chunk 1.
+        batch1 = next(iterator)
+        batch1_processing_start = time.time()
+        
+        # Simulate consumer processing taking a very long time
+        time.sleep(0.2) 
+        batch1_processing_end = time.time()
+        
+        # 2. Ask for second batch.
+        batch2 = next(iterator)
+        
+        assert len(source.download_start_times) == 2
+        
+        # KEY ASSERTION: Chunk 1 download MUST have started BEFORE we finished processing batch 1!
+        # This proves the background thread is overlapping I/O behind our compute.
+        assert source.download_start_times[1] < batch1_processing_end, "Prefetch did not overlap with consumer processing!"

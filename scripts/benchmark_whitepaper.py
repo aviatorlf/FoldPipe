@@ -11,7 +11,7 @@ import itertools
 import matplotlib.pyplot as plt
 import numpy as np
 from foldpipe import AsyncFoldPipeLoader
-from foldpipe.sources import HuggingFaceSource
+from foldpipe.sources import HuggingFaceSource, PreenumeratedSource
 from torch_geometric.nn.models import SchNet
 import io
 
@@ -124,7 +124,7 @@ def train_batch(model, optimizer, criterion, mini_batch):
 # ---------------------------------------------------------
 # PHASE 1: BASELINE A (EAGER ACCUMULATION) OOM TEST
 # ---------------------------------------------------------
-def run_baseline_in_memory(files, model, initial_state_dict):
+def run_baseline_in_memory(source, model, initial_state_dict):
     print("      --- BASELINE A: Eager In-Memory Accumulation ---")
     torch.manual_seed(42)
     model.load_state_dict(initial_state_dict)
@@ -139,15 +139,8 @@ def run_baseline_in_memory(files, model, initial_state_dict):
     start_t = time.time()
     
     try:
-        for i, f in enumerate(files[:MAX_CHUNKS]):
-            request_url = f"https://huggingface.co/datasets/aviatorlf/prion-dataset/resolve/main/{f}"
-            headers = {"Authorization": f"Bearer {os.environ.get('HF_TOKEN')}"} if os.environ.get("HF_TOKEN") else {}
-            import requests
-            response = requests.get(request_url, headers=headers, stream=True)
-            response.raise_for_status()
-            fh = io.BytesIO(response.content)
-            fh.seek(0)
-            tensor = torch.load(fh, map_location='cpu')
+        for i, f in enumerate(source.iter_files()):
+            tensor = source.download_chunk(f)
             
             if psutil.virtual_memory().percent > 90.0:
                 raise MemoryError("System RAM exhausted.")
@@ -168,7 +161,7 @@ def run_baseline_in_memory(files, model, initial_state_dict):
 # ---------------------------------------------------------
 # PHASE 2: BASELINE B (SEQUENTIAL BOUNDED STREAMING)
 # ---------------------------------------------------------
-def run_sequential_stream(files, model, initial_state_dict):
+def run_sequential_stream(source, model, initial_state_dict):
     print("      --- BASELINE B: Sequential Bounded Streaming ---")
     torch.manual_seed(42)
     model.load_state_dict(initial_state_dict)
@@ -179,15 +172,8 @@ def run_sequential_stream(files, model, initial_state_dict):
     profiler.start()
     start_t = time.time()
     
-    for i, f in enumerate(files[:MAX_CHUNKS]):
-        request_url = f"https://huggingface.co/datasets/aviatorlf/prion-dataset/resolve/main/{f}"
-        headers = {"Authorization": f"Bearer {os.environ.get('HF_TOKEN')}"} if os.environ.get("HF_TOKEN") else {}
-        import requests
-        response = requests.get(request_url, headers=headers, stream=True)
-        response.raise_for_status()
-        fh = io.BytesIO(response.content)
-        fh.seek(0)
-        tensor = torch.load(fh, map_location='cpu')
+    for i, f in enumerate(source.iter_files()):
+        tensor = source.download_chunk(f)
         
         for b in range(0, tensor.size(0), BATCH_SIZE):
             train_batch(model, optimizer, criterion, tensor[b:b+BATCH_SIZE])
@@ -200,7 +186,7 @@ def run_sequential_stream(files, model, initial_state_dict):
 # ---------------------------------------------------------
 # PHASE 3: FOLDPIPE (ASYNC STREAMING) TEST
 # ---------------------------------------------------------
-def run_foldpipe_stream(model, initial_state_dict):
+def run_foldpipe_stream(source, model, initial_state_dict):
     print(f"      --- FOLDPIPE ASYNC STREAM ---")
     torch.manual_seed(42)
     model.load_state_dict(initial_state_dict)
@@ -211,9 +197,7 @@ def run_foldpipe_stream(model, initial_state_dict):
     profiler.start()
     start_t = time.time()
     
-    source = HuggingFaceSource(repo_id="aviatorlf/prion-dataset", token=os.environ.get("HF_TOKEN"))
-    limited_source = LimitedSource(source, MAX_CHUNKS)
-    loader = AsyncFoldPipeLoader(source=limited_source, batch_size=BATCH_SIZE)
+    loader = AsyncFoldPipeLoader(source=source, batch_size=BATCH_SIZE)
     
     for batch_idx, mini_batch in enumerate(loader):
         train_batch(model, optimizer, criterion, mini_batch)
@@ -225,11 +209,9 @@ def run_foldpipe_stream(model, initial_state_dict):
 # EXECUTION & PLOTTING
 # ---------------------------------------------------------
 if __name__ == "__main__":
-    source = HuggingFaceSource(repo_id="aviatorlf/prion-dataset", token=os.environ.get("HF_TOKEN"))
-    
-    # Materialize file names ONLY for the baselines (which don't strictly use iter_files yet internally in their loop)
-    # FoldPipe strictly uses iter_files internally.
-    all_files = list(itertools.islice(source.iter_files(), MAX_CHUNKS))
+    hf_source = HuggingFaceSource(repo_id="aviatorlf/prion-dataset", token=os.environ.get("HF_TOKEN"))
+    all_files = list(itertools.islice(hf_source.iter_files(), MAX_CHUNKS))
+    preenum_source = PreenumeratedSource(all_files, hf_source)
             
     models_to_test = {
         "Synthetic Deep": get_deep_model(),
@@ -259,9 +241,9 @@ if __name__ == "__main__":
         for run_idx in range(NUM_RUNS):
             print(f"  --- RUN {run_idx+1}/{NUM_RUNS} ---")
             
-            eager_prof, eager_crashed, eager_time = run_baseline_in_memory(all_files, active_model, initial_state_dict)
-            seq_prof, seq_crashed, seq_time = run_sequential_stream(all_files, active_model, initial_state_dict)
-            fp_prof, fp_crashed, fp_time = run_foldpipe_stream(active_model, initial_state_dict)
+            eager_prof, eager_crashed, eager_time = run_baseline_in_memory(preenum_source, active_model, initial_state_dict)
+            seq_prof, seq_crashed, seq_time = run_sequential_stream(preenum_source, active_model, initial_state_dict)
+            fp_prof, fp_crashed, fp_time = run_foldpipe_stream(preenum_source, active_model, initial_state_dict)
             
             # Record metrics
             metrics["eager"]["time"].append(eager_time)
@@ -290,29 +272,39 @@ if __name__ == "__main__":
                 
         # Aggregate statistics
         def aggregate(data):
+            mean = float(np.mean(data))
+            std = float(np.std(data))
             return {
-                "mean": float(np.mean(data)),
+                "mean": mean,
                 "median": float(np.median(data)),
-                "std": float(np.std(data)),
+                "std": std,
+                "ci_95": 1.96 * std / np.sqrt(NUM_RUNS) if NUM_RUNS > 0 else 0.0,
                 "raw": data
             }
             
         experiment_results[model_name] = {
             "eager": {
                 "time": aggregate(metrics["eager"]["time"]),
+                "throughput_chunks_per_sec": MAX_CHUNKS / np.mean(metrics["eager"]["time"]) if not any(metrics["eager"]["crashed"]) else 0,
                 "peak_rss_gb": aggregate(metrics["eager"]["peak_rss"]),
                 "crashed": any(metrics["eager"]["crashed"])
             },
             "sequential": {
                 "time": aggregate(metrics["sequential"]["time"]),
+                "throughput_chunks_per_sec": MAX_CHUNKS / np.mean(metrics["sequential"]["time"]),
                 "peak_rss_gb": aggregate(metrics["sequential"]["peak_rss"]),
                 "avg_gpu_util": aggregate(metrics["sequential"]["avg_gpu"])
             },
             "foldpipe": {
                 "time": aggregate(metrics["foldpipe"]["time"]),
+                "throughput_chunks_per_sec": MAX_CHUNKS / np.mean(metrics["foldpipe"]["time"]),
                 "peak_rss_gb": aggregate(metrics["foldpipe"]["peak_rss"]),
                 "avg_gpu_util": aggregate(metrics["foldpipe"]["avg_gpu"])
             }
+        }
+        
+        experiment_results[model_name]["speedup"] = {
+            "mean_speedup": experiment_results[model_name]["sequential"]["time"]["mean"] / experiment_results[model_name]["foldpipe"]["time"]["mean"]
         }
         
         # Save raw JSON for this model

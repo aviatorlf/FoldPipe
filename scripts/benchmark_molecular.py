@@ -16,7 +16,7 @@ from torch_geometric.data import Batch
 from torch_geometric.nn.models import SchNet
 
 from foldpipe import AsyncFoldPipeLoader
-from foldpipe.sources import HuggingFaceSource
+from foldpipe.sources import HuggingFaceSource, PreenumeratedSource
 import io
 
 MAX_CHUNKS = 5  # Smaller limit for MD17 (since chunks might be large)
@@ -128,7 +128,7 @@ def train_batch(model, optimizer, criterion, mini_batch):
 # ---------------------------------------------------------
 # PHASE 1: SEQUENTIAL BOUNDED STREAMING
 # ---------------------------------------------------------
-def run_sequential_stream(files, model, initial_state_dict):
+def run_sequential_stream(source, model, initial_state_dict):
     print("      --- BASELINE: Sequential Bounded Streaming ---")
     torch.manual_seed(42)
     model.load_state_dict(initial_state_dict)
@@ -139,16 +139,8 @@ def run_sequential_stream(files, model, initial_state_dict):
     profiler.start()
     start_t = time.time()
     
-    for i, f in enumerate(files[:MAX_CHUNKS]):
-        request_url = f"https://huggingface.co/datasets/aviatorlf/md17-shards/resolve/main/{f}"
-        headers = {"Authorization": f"Bearer {os.environ.get('HF_TOKEN')}"} if os.environ.get("HF_TOKEN") else {}
-        import requests
-        response = requests.get(request_url, headers=headers, stream=True)
-        response.raise_for_status()
-        fh = io.BytesIO(response.content)
-        fh.seek(0)
-        chunk_list = torch.load(fh, map_location='cpu', weights_only=False)
-        
+    for i, f in enumerate(source.iter_files()):
+        chunk_list = source.download_chunk(f)
         for mini_batch in pyg_batch_fn(chunk_list, batch_size=32):
             train_batch(model, optimizer, criterion, mini_batch)
             
@@ -160,7 +152,7 @@ def run_sequential_stream(files, model, initial_state_dict):
 # ---------------------------------------------------------
 # PHASE 2: FOLDPIPE (ASYNC STREAMING) TEST
 # ---------------------------------------------------------
-def run_foldpipe_stream(model, initial_state_dict):
+def run_foldpipe_stream(source, model, initial_state_dict):
     print(f"      --- FOLDPIPE ASYNC STREAM ---")
     torch.manual_seed(42)
     model.load_state_dict(initial_state_dict)
@@ -171,12 +163,9 @@ def run_foldpipe_stream(model, initial_state_dict):
     profiler.start()
     start_t = time.time()
     
-    source = HuggingFaceSource(repo_id="aviatorlf/md17-shards", token=os.environ.get("HF_TOKEN"))
-    limited_source = LimitedSource(source, MAX_CHUNKS)
-    
     # Inject our custom PyG batching function (we partially apply batch_size)
     loader = AsyncFoldPipeLoader(
-        source=limited_source, 
+        source=source, 
         batch_size=32, 
         batch_fn=lambda chunk: pyg_batch_fn(chunk, batch_size=32)
     )
@@ -191,8 +180,9 @@ def run_foldpipe_stream(model, initial_state_dict):
 # EXECUTION & PLOTTING
 # ---------------------------------------------------------
 if __name__ == "__main__":
-    source = HuggingFaceSource(repo_id="aviatorlf/md17-shards", token=os.environ.get("HF_TOKEN"))
-    all_files = list(itertools.islice(source.iter_files(), MAX_CHUNKS))
+    hf_source = HuggingFaceSource(repo_id="aviatorlf/md17-shards", token=os.environ.get("HF_TOKEN"))
+    all_files = list(itertools.islice(hf_source.iter_files(), MAX_CHUNKS))
+    preenum_source = PreenumeratedSource(all_files, hf_source)
             
     print(f"\n=========================================")
     print(f"TESTING MODEL ARCHITECTURE: Real SchNet on MD17")
@@ -211,8 +201,8 @@ if __name__ == "__main__":
     for run_idx in range(NUM_RUNS):
         print(f"  --- RUN {run_idx+1}/{NUM_RUNS} ---")
         
-        seq_prof, seq_crashed, seq_time = run_sequential_stream(all_files, active_model, initial_state_dict)
-        fp_prof, fp_crashed, fp_time = run_foldpipe_stream(active_model, initial_state_dict)
+        seq_prof, seq_crashed, seq_time = run_sequential_stream(preenum_source, active_model, initial_state_dict)
+        fp_prof, fp_crashed, fp_time = run_foldpipe_stream(preenum_source, active_model, initial_state_dict)
         
         metrics["sequential"]["time"].append(seq_time)
         metrics["sequential"]["peak_rss"].append(seq_prof.peak_rss / (1024**3))
@@ -232,24 +222,33 @@ if __name__ == "__main__":
             
     # Aggregate statistics
     def aggregate(data):
+        mean = float(np.mean(data))
+        std = float(np.std(data))
         return {
-            "mean": float(np.mean(data)),
+            "mean": mean,
             "median": float(np.median(data)),
-            "std": float(np.std(data)),
+            "std": std,
+            "ci_95": 1.96 * std / np.sqrt(NUM_RUNS) if NUM_RUNS > 0 else 0.0,
             "raw": data
         }
         
     experiment_results = {
         "sequential": {
             "time": aggregate(metrics["sequential"]["time"]),
+            "throughput_chunks_per_sec": MAX_CHUNKS / np.mean(metrics["sequential"]["time"]),
             "peak_rss_gb": aggregate(metrics["sequential"]["peak_rss"]),
             "avg_gpu_util": aggregate(metrics["sequential"]["avg_gpu"])
         },
         "foldpipe": {
             "time": aggregate(metrics["foldpipe"]["time"]),
+            "throughput_chunks_per_sec": MAX_CHUNKS / np.mean(metrics["foldpipe"]["time"]),
             "peak_rss_gb": aggregate(metrics["foldpipe"]["peak_rss"]),
             "avg_gpu_util": aggregate(metrics["foldpipe"]["avg_gpu"])
         }
+    }
+    
+    experiment_results["speedup"] = {
+        "mean_speedup": experiment_results["sequential"]["time"]["mean"] / experiment_results["foldpipe"]["time"]["mean"]
     }
     
     with open(f"results/benchmark_stats_md17.json", "w") as f:

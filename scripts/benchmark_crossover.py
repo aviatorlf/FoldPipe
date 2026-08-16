@@ -14,7 +14,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 MAX_CHUNKS = 10
 BATCH_SIZE = 128
-COMPUTE_TIME_MS = 100  # Fixed synthetic compute time
+CONSUMER_DELAY_MS = 100  # Fixed synthetic controlled consumer processing delay
 
 def get_tiny_model():
     return nn.Sequential(nn.Linear(3, 16), nn.Linear(16, 3)).to(device)
@@ -27,8 +27,8 @@ def train_batch(model, optimizer, criterion, mini_batch):
     loss.backward()
     optimizer.step()
     
-    # Force fixed compute time to isolate the crossover mechanism precisely
-    time.sleep(COMPUTE_TIME_MS / 1000.0)
+    # Force fixed consumer delay to isolate the crossover mechanism precisely
+    time.sleep(CONSUMER_DELAY_MS / 1000.0)
 
 def run_sequential_sweep(source, model, initial_state_dict):
     torch.manual_seed(42)
@@ -52,7 +52,6 @@ def run_async_sweep(source, model, initial_state_dict):
     
     start_t = time.time()
     loader = AsyncFoldPipeLoader(source=source, batch_size=BATCH_SIZE)
-    loader.file_iterator = itertools.islice(loader.file_iterator, MAX_CHUNKS)
     
     for mini_batch in loader:
         train_batch(model, optimizer, criterion, mini_batch)
@@ -73,7 +72,7 @@ if __name__ == "__main__":
     
     print("=========================================")
     print("RUNNING ISOLATED MECHANISM SWEEP")
-    print(f"Fixed Compute Time: {COMPUTE_TIME_MS}ms")
+    print(f"Fixed Consumer Delay: {CONSUMER_DELAY_MS}ms")
     print("=========================================")
     
     for lat in latencies_ms:
@@ -86,7 +85,7 @@ if __name__ == "__main__":
         speedup = t_seq / t_async
         
         # Calculate theoretical values per batch
-        C = COMPUTE_TIME_MS / 1000.0 * 4 # 4 batches per chunk
+        C = CONSUMER_DELAY_MS / 1000.0 * 4 # 4 batches per chunk
         D = lat / 1000.0
         ratio = D / C
         theoretical = (D + C) / max(D, C)
@@ -103,10 +102,10 @@ if __name__ == "__main__":
     plt.plot(results["D_C_ratios"], results["theoretical_speedup"], label="Theoretical Ideal", linestyle="--", color="gray", linewidth=2)
     plt.plot(results["D_C_ratios"], results["measured_speedup"], label="Measured FoldPipe", marker="o", color="green", linewidth=2)
     
-    plt.axvline(x=1.0, color='red', linestyle=':', label="Compute = I/O (Optimal Overlap)")
+    plt.axvline(x=1.0, color='red', linestyle=':', label="Consumer = I/O (Optimal Overlap)")
     
-    plt.title("Compute/IO Crossover: Measured vs Theoretical Speedup")
-    plt.xlabel("D/C Ratio (Download Time / Compute Time)")
+    plt.title("Mechanism Crossover: Measured vs Theoretical Speedup")
+    plt.xlabel("D/C Ratio (Download Time / Consumer Delay)")
     plt.ylabel("Speedup (T_seq / T_async)")
     plt.grid(True, alpha=0.3)
     plt.legend()

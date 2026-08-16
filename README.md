@@ -27,8 +27,8 @@ To prove the architecture's efficiency at eliminating network I/O bounds, we ben
 ![Benchmark Results](assets/benchmark_comparison.png)
 
 ### The Results
-1. **RAM Scaling ($O(N)$ vs $O(1)$):** The PyG Baseline dataloader demonstrated linear $O(N)$ memory growth, hoarding every downloaded tensor in RAM. FoldPipe successfully demonstrated strict $O(1)$ memory bounding by yielding and aggressively releasing each chunk after GPU computation.
-2. **Hardware Crossover & GPU Saturation:** The Baseline pipeline forced the GPU to idle synchronously while waiting for sequential network downloads. FoldPipe's asynchronous producer/consumer architecture completely hid the network I/O latency behind compute. When processing a sufficiently deep neural network, FoldPipe achieved **continuous >90% GPU saturation** on Kaggle's T4/P100 instances, empirically demonstrating our network-latency masking crossover point.
+1. **RAM Scaling ($O(N)$ vs $O(1)$):** The eager-accumulation baseline demonstrated linear $O(N)$ payload-memory growth, hoarding every downloaded tensor in RAM. FoldPipe successfully demonstrated strict $O(1)$ memory bounding by yielding and aggressively releasing each chunk after GPU computation.
+2. **Hardware Crossover & GPU Saturation:** The Baseline pipeline forced the GPU to idle synchronously while waiting for sequential network downloads. FoldPipe's asynchronous producer/consumer architecture can fully mask shard-fetch latency when current-shard processing time is at least as large as next-shard retrieval time. When processing a sufficiently deep neural network, FoldPipe achieved **continuous >90% GPU saturation** on Kaggle's T4/P100 instances, empirically demonstrating our network-latency masking crossover point.
 
 ### Kaggle T4 MD17 Production Benchmark
 We recently validated FoldPipe's streaming backend on Kaggle's Tesla T4 instance, training a PyTorch SchNet model on sharded MD17 datasets dynamically streamed from Hugging Face:

@@ -130,3 +130,20 @@ class SyntheticLatencySource(Source):
         if self.latency_ms > 0:
             time.sleep(self.latency_ms / 1000.0)
         return torch.randn(self.chunk_size, 3)
+
+class PreenumeratedSource(Source):
+    """
+    A wrapper source that takes a pre-fetched list of file identifiers and an underlying source.
+    This eliminates remote API discovery overhead (e.g. list_repo_tree) during benchmarks,
+    ensuring that timing strictly measures the orchestration pipeline.
+    """
+    def __init__(self, identifiers, underlying_source):
+        self.identifiers = identifiers
+        self.underlying_source = underlying_source
+
+    def iter_files(self):
+        for identifier in self.identifiers:
+            yield identifier
+
+    def download_chunk(self, identifier):
+        return self.underlying_source.download_chunk(identifier)
