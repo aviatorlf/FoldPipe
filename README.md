@@ -1,7 +1,7 @@
 # FoldPipe: Bounded Remote Streaming for Native Molecular-Data Shards
 
 [![PyPI](https://img.shields.io/pypi/v/foldpipe.svg)](https://pypi.org/project/foldpipe/)
-[![Kaggle](https://kaggle.com/static/images/open-in-kaggle.svg)](https://kaggle.com/kernels/welcome?src=https://github.com/aviatorlf/FoldPipe/blob/v0.3.1/notebooks/Quickstart.ipynb)
+[![Kaggle](https://kaggle.com/static/images/open-in-kaggle.svg)](https://kaggle.com/kernels/welcome?src=https://github.com/aviatorlf/FoldPipe/blob/v0.3.2/notebooks/Quickstart.ipynb)
 
 FoldPipe is a small loader for streaming trusted, already-sharded PyTorch/PyG
 molecular data without first converting it into a different storage format.
@@ -11,24 +11,24 @@ molecular data without first converting it into a different storage format.
 Most users only need the library and one tutorial:
 
 ```bash
-pip install foldpipe==0.3.1
+pip install foldpipe==0.3.2
 ```
 
-- Open [`Quickstart.ipynb`](https://github.com/aviatorlf/FoldPipe/blob/v0.3.1/notebooks/Quickstart.ipynb) for a five-minute,
+- Open [`Quickstart.ipynb`](https://github.com/aviatorlf/FoldPipe/blob/v0.3.2/notebooks/Quickstart.ipynb) for a five-minute,
   credential-free introduction.
-- Open [`Prion_Case_Study.ipynb`](https://github.com/aviatorlf/FoldPipe/blob/v0.3.1/notebooks/Prion_Case_Study.ipynb) for an
+- Open [`Prion_Case_Study.ipynb`](https://github.com/aviatorlf/FoldPipe/blob/v0.3.2/notebooks/Prion_Case_Study.ipynb) for an
   educational end-to-end example using the public 1QLX structure from RCSB PDB.
 
 ## Repository Structure
 
 | Path | Audience | Purpose |
 | :--- | :--- | :--- |
-| [`foldpipe/`](https://github.com/aviatorlf/FoldPipe/tree/v0.3.1/foldpipe) | Users | The installed core library and public API. Start here if you want to inspect the implementation. |
-| [`notebooks/`](https://github.com/aviatorlf/FoldPipe/tree/v0.3.1/notebooks) | Users | Two maintained tutorials. Historical prototypes are clearly separated under `notebooks/archive/`. |
-| [`scripts/`](https://github.com/aviatorlf/FoldPipe/tree/v0.3.1/scripts) and [`results/`](https://github.com/aviatorlf/FoldPipe/tree/v0.3.1/results) | Peer reviewers | Reproducibility code, raw traces, reports, and benchmark packaging. Normal users can safely ignore these. |
-| [`tests/`](https://github.com/aviatorlf/FoldPipe/tree/v0.3.1/tests) | Contributors | Automated checks that protect the core loader and benchmark logic. |
-| [`data/`](https://github.com/aviatorlf/FoldPipe/tree/v0.3.1/data) | Tutorial users | Small bundled inputs and data-location notes; large trajectory shards remain remote. |
-| [`paper/`](https://github.com/aviatorlf/FoldPipe/tree/v0.3.1/paper) | Readers and reviewers | Manuscript draft, references, and the plagiarism/novelty audit. |
+| [`foldpipe/`](https://github.com/aviatorlf/FoldPipe/tree/v0.3.2/foldpipe) | Users | The installed core library and public API. Start here if you want to inspect the implementation. |
+| [`notebooks/`](https://github.com/aviatorlf/FoldPipe/tree/v0.3.2/notebooks) | Users | Two maintained tutorials. Historical prototypes are clearly separated under `notebooks/archive/`. |
+| [`scripts/`](https://github.com/aviatorlf/FoldPipe/tree/v0.3.2/scripts) and [`results/`](https://github.com/aviatorlf/FoldPipe/tree/v0.3.2/results) | Peer reviewers | Reproducibility code, raw traces, reports, and benchmark packaging. Normal users can safely ignore these. |
+| [`tests/`](https://github.com/aviatorlf/FoldPipe/tree/v0.3.2/tests) | Contributors | Automated checks that protect the core loader and benchmark logic. |
+| [`data/`](https://github.com/aviatorlf/FoldPipe/tree/v0.3.2/data) | Tutorial users | Small bundled inputs and data-location notes; large trajectory shards remain remote. |
+| [`paper/`](https://github.com/aviatorlf/FoldPipe/tree/v0.3.2/paper) | Readers and reviewers | Manuscript draft, references, and the plagiarism/novelty audit. |
 
 ## The Problem
 
@@ -58,7 +58,7 @@ The utilization measurements belong to different experiments and should not be c
 
 To evaluate when asynchronous prefetch masks network I/O, we benchmarked FoldPipe against shards drawn from a large trajectory corpus on Kaggle hardware.
 
-![Benchmark Results](https://raw.githubusercontent.com/aviatorlf/FoldPipe/v0.3.1/assets/benchmark_comparison.png)
+![Benchmark Results](https://raw.githubusercontent.com/aviatorlf/FoldPipe/v0.3.2/assets/benchmark_comparison.png)
 
 ### The Results
 
@@ -84,9 +84,9 @@ FoldPipe was faster in 11 of 20 pairs. The primary multiplicative estimand, the 
 
 The benchmark pinned `aviatorlf/md17-shards` to revision `f779686deb9217877dd7ddde99b2522bd441492a`, executed clean Git commit `16fdbb26b00f9721ce4034335ce0ee12bda77720`, and embedded a source bundle with SHA-256 `4fc3f6d712557822efc0d5d71aaa616b0fe30f578631726ef60d6a0fe73b32c0`. The raw JSON preserves all paired durations plus per-shard download, deserialization, training, payload-byte, overlap, and wait-time traces.
 
-![MD17 SchNet benchmark](https://raw.githubusercontent.com/aviatorlf/FoldPipe/v0.3.1/results/benchmark_comparison_md17.png)
+![MD17 SchNet benchmark](https://raw.githubusercontent.com/aviatorlf/FoldPipe/v0.3.2/results/benchmark_comparison_md17.png)
 
-Artifacts: [`benchmark report`](https://github.com/aviatorlf/FoldPipe/blob/v0.3.1/results/benchmark_report_md17.md), [`raw statistics and traces`](https://github.com/aviatorlf/FoldPipe/blob/v0.3.1/results/benchmark_stats_md17.json), [`source manifest`](https://github.com/aviatorlf/FoldPipe/blob/v0.3.1/results/benchmark_source_manifest_md17.json), [`Kaggle execution log`](https://github.com/aviatorlf/FoldPipe/blob/v0.3.1/results/foldpipe-md17-rigorous-benchmark-v8.log), and the [Kaggle version 8 kernel](https://www.kaggle.com/code/dhirenkhatri/foldpipe-md17-rigorous-benchmark).
+Artifacts: [`benchmark report`](https://github.com/aviatorlf/FoldPipe/blob/v0.3.2/results/benchmark_report_md17.md), [`raw statistics and traces`](https://github.com/aviatorlf/FoldPipe/blob/v0.3.2/results/benchmark_stats_md17.json), [`source manifest`](https://github.com/aviatorlf/FoldPipe/blob/v0.3.2/results/benchmark_source_manifest_md17.json), [`Kaggle execution log`](https://github.com/aviatorlf/FoldPipe/blob/v0.3.2/results/foldpipe-md17-rigorous-benchmark-v8.log), and the [Kaggle version 8 kernel](https://www.kaggle.com/code/dhirenkhatri/foldpipe-md17-rigorous-benchmark).
 
 ## Quickstart & Usage
 
@@ -94,7 +94,7 @@ Artifacts: [`benchmark report`](https://github.com/aviatorlf/FoldPipe/blob/v0.3.
 
 Install the stable PyPI release:
 ```bash
-pip install foldpipe==0.3.1
+pip install foldpipe==0.3.2
 ```
 
 ### 2. Standard PyTorch Training Loop

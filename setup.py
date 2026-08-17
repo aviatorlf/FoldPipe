@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="foldpipe",
-    version="0.3.1",
+    version="0.3.2",
     author="FoldPipe Contributors",
     description="Bounded-memory asynchronous streaming for native PyTorch/PyG molecular-data shards.",
     long_description=long_description,
