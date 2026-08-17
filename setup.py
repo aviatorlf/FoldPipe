@@ -5,16 +5,21 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="foldpipe",
-    version="0.3.0",
+    version="0.3.1",
     author="FoldPipe Contributors",
     description="Bounded-memory asynchronous streaming for native PyTorch/PyG molecular-data shards.",
     long_description=long_description,
     long_description_content_type="text/markdown",
+    license="MIT",
     url="https://github.com/aviatorlf/FoldPipe",
+    project_urls={
+        "Documentation": "https://github.com/aviatorlf/FoldPipe#readme",
+        "Source": "https://github.com/aviatorlf/FoldPipe",
+        "Issues": "https://github.com/aviatorlf/FoldPipe/issues",
+    },
     packages=find_packages(include=["foldpipe", "foldpipe.*"]),
     classifiers=[
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
         "Topic :: Scientific/Engineering :: Bio-Informatics",
     ],

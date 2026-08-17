@@ -16,7 +16,10 @@ HF_REPO = "aviatorlf/prion-dataset"
 
 # Google Drive configuration
 GDRIVE_FOLDER_ID = "1Few5wzRuuhlwbj4DJD9nkOP98t_QqZcz"
-GDRIVE_SECRET_PATH = "/kaggle/input/gcp-secret-dataset/token.json"
+GDRIVE_SECRET_PATH = os.environ.get(
+    "GDRIVE_SECRET_PATH",
+    "/kaggle/input/gcp-secret-dataset/token.json",
+)
 
 def migrate_gdrive_to_hf():
     print("Authenticating with Google Drive...")
