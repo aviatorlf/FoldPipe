@@ -3,7 +3,15 @@ message: "If you use this software in your research, please cite it as below."
 authors:
   - family-names: "Khatri"
     given-names: "Dhiren"
-title: "FoldPipe: An I/O-Optimized Surrogate Pipeline for High-Throughput Molecular Dynamics"
-version: 0.2.0
-date-released: 2026-08-10
+title: "FoldPipe: Bounded Remote Streaming of Native Molecular-Data Shards"
+version: 0.3.0
+date-released: 2026-08-17
 url: "https://github.com/aviatorlf/FoldPipe"
+repository-code: "https://github.com/aviatorlf/FoldPipe"
+license: MIT
+keywords:
+  - molecular machine learning
+  - PyTorch Geometric
+  - asynchronous prefetch
+  - remote data streaming
+  - reproducible benchmarking

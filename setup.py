@@ -7,13 +7,11 @@ setup(
     name="foldpipe",
     version="0.3.0",
     author="FoldPipe Contributors",
-    description="I/O-optimized Machine Learning Force Field (MLFF) data pipeline for constrained hardware.",
+    description="Bounded-memory asynchronous streaming for native PyTorch/PyG molecular-data shards.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/aviatorlf/FoldPipe",
-    packages=find_packages(
-        include=["foldpipe", "foldpipe.*", "scripts", "scripts.*"]
-    ),
+    packages=find_packages(include=["foldpipe", "foldpipe.*"]),
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
