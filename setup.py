@@ -5,14 +5,15 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="foldpipe",
-    version="0.2.0",
+    version="0.3.0",
     author="FoldPipe Contributors",
-    author_email="contact@foldpipe.example",
     description="I/O-optimized Machine Learning Force Field (MLFF) data pipeline for constrained hardware.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/aviatorlf/FoldPipe",
-    packages=find_packages(),
+    packages=find_packages(
+        include=["foldpipe", "foldpipe.*", "scripts", "scripts.*"]
+    ),
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
@@ -28,6 +29,9 @@ setup(
         "google-auth-oauthlib",
         "requests",
         "huggingface_hub",
-        "nbformat>=5.0",
     ],
+    extras_require={
+        "bench": ["nbformat>=5.0"],
+        "dev": ["flake8", "nbformat>=5.0", "pytest", "pytest-mock"],
+    },
 )

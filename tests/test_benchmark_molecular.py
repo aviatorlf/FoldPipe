@@ -1,10 +1,18 @@
 import copy
+import json
+import subprocess
 
 import pytest
 import torch
 
 import scripts.benchmark_molecular as benchmark
-from scripts.benchmark_molecular import RunTrace, aggregate, pipeline_order
+from scripts.benchmark_molecular import (
+    RunTrace,
+    aggregate,
+    geometric_mean_speedup,
+    median_paired_difference,
+    pipeline_order,
+)
 
 
 def test_pipeline_order_is_balanced_and_alternating():
@@ -41,6 +49,46 @@ def test_aggregate_uses_sample_std_and_bootstrap_interval():
     assert result["sample_std"] == 1.0
     assert result["ci_95"]["method"] == "percentile bootstrap"
     assert result["ci_95"]["low"] <= result["mean"] <= result["ci_95"]["high"]
+
+
+def test_geometric_mean_speedup_bootstraps_in_log_space():
+    result = geometric_mean_speedup([1.0, 2.0, 4.0], seed=7)
+
+    assert result["estimate"] == pytest.approx(2.0)
+    assert result["ci_95"]["low"] <= result["estimate"]
+    assert result["ci_95"]["high"] >= result["estimate"]
+    assert "log-ratio space" in result["ci_95"]["method"]
+
+
+def test_median_paired_difference_has_its_own_bootstrap_interval():
+    result = median_paired_difference([-1.0, 3.0, 5.0], seed=7)
+
+    assert result["median"] == 3.0
+    assert result["ci_95"]["low"] <= result["median"]
+    assert result["ci_95"]["high"] >= result["median"]
+    assert "median" in result["ci_95"]["method"]
+
+
+def test_git_metadata_falls_back_to_clean_source_manifest(monkeypatch, tmp_path):
+    manifest = {
+        "base_git_commit": "abc123",
+        "working_tree_dirty": False,
+        "bundle_sha256": "def456",
+    }
+    manifest_path = tmp_path / "source_manifest.json"
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+
+    def no_git(*_args, **_kwargs):
+        raise subprocess.CalledProcessError(1, "git")
+
+    monkeypatch.setattr(benchmark.subprocess, "check_output", no_git)
+    monkeypatch.setenv("FOLDPIPE_SOURCE_MANIFEST", str(manifest_path))
+
+    metadata = benchmark.git_metadata()
+
+    assert metadata["commit"] == "abc123"
+    assert metadata["dirty"] is False
+    assert metadata["source_bundle"] == manifest
 
 
 def test_run_trace_calculates_io_compute_overlap_and_bytes():
