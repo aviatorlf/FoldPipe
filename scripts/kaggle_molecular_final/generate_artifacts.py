@@ -1,5 +1,6 @@
 """Generate a self-contained, reproducible Kaggle benchmark notebook."""
 
+import argparse
 import base64
 import hashlib
 import json
@@ -11,6 +12,8 @@ import nbformat as nbf
 
 ROOT = Path(__file__).resolve().parents[2]
 OUTPUT_DIR = Path(__file__).resolve().parent
+PAIRED_RUNS = 20
+DATASET_REVISION = "f779686deb9217877dd7ddde99b2522bd441492a"
 SOURCE_PATHS = (
     "foldpipe/__init__.py",
     "foldpipe/loader.py",
@@ -148,8 +151,9 @@ run_environment = os.environ.copy()
 run_environment.update({
     "HF_TOKEN": secret_token,
     "FOLDPIPE_HF_REPO_ID": "aviatorlf/md17-shards",
+    "FOLDPIPE_HF_REVISION": "__DATASET_REVISION__",
     "FOLDPIPE_MAX_CHUNKS": "5",
-    "FOLDPIPE_NUM_RUNS": "10",
+    "FOLDPIPE_NUM_RUNS": "20",
     "FOLDPIPE_BOOTSTRAP_SAMPLES": "20000",
     "FOLDPIPE_SOURCE_MANIFEST": str(Path.cwd() / "source_manifest.json"),
     "PYTHONUNBUFFERED": "1",
@@ -174,30 +178,42 @@ results = json.loads(results_path.read_text(encoding="utf-8"))
 seq = results["sequential"]
 fold = results["foldpipe"]
 effect = results["paired_effect"]
-speed_ci = effect["speedup_ratio"]["ci_95"]
-saved_ci = effect["time_saved_s"]["ci_95"]
-ratio_includes_null = speed_ci["low"] <= 1.0 <= speed_ci["high"]
-additive_includes_null = saved_ci["low"] <= 0.0 <= saved_ci["high"]
-if ratio_includes_null and additive_includes_null:
-    interpretation = "Both paired intervals include their no-effect values; this run is inconclusive about a speed advantage."
-elif not ratio_includes_null and additive_includes_null:
+geometric = effect["geometric_mean_speedup"]
+geometric_ci = geometric["ci_95"]
+mean_saved = effect["time_saved_s"]
+mean_saved_ci = mean_saved["ci_95"]
+median_saved = effect["median_time_saved_s"]
+median_saved_ci = median_saved["ci_95"]
+geometric_includes_null = geometric_ci["low"] <= 1.0 <= geometric_ci["high"]
+mean_saved_includes_null = mean_saved_ci["low"] <= 0.0 <= mean_saved_ci["high"]
+median_saved_includes_null = median_saved_ci["low"] <= 0.0 <= median_saved_ci["high"]
+if geometric_includes_null and mean_saved_includes_null and median_saved_includes_null:
+    interpretation = "All three paired intervals include their no-effect values; this run is inconclusive about a speed advantage."
+elif (
+    not geometric_includes_null
+    and not mean_saved_includes_null
+    and not median_saved_includes_null
+    and geometric_ci["low"] > 1.0
+    and mean_saved_ci["low"] > 0.0
+    and median_saved_ci["low"] > 0.0
+):
     interpretation = (
-        "The mean-ratio interval excludes 1 in FoldPipe's favor, but the additive time-saved interval includes 0. "
-        "The estimands disagree under high run-to-run variability, so the result should not be presented as a universal speedup."
-    )
-elif ratio_includes_null and not additive_includes_null:
-    interpretation = (
-        "The additive time-saved interval excludes 0, but the mean-ratio interval includes 1. "
-        "The estimands disagree, so both paired summaries and the raw runs should be reported."
+        "All three paired intervals exclude their no-effect values in FoldPipe's favor for this protocol. "
+        "This supports a conditional benefit under the measured environment, not a universal speedup claim."
     )
 else:
-    interpretation = "Both paired intervals exclude their no-effect values for this protocol."
+    interpretation = (
+        "The multiplicative and additive paired estimands do not give uniformly decisive intervals. "
+        "Under high run-to-run network variability, all summaries and raw runs should be reported rather than presenting a universal speedup."
+    )
 
 report = f"""# FoldPipe MD17 + SchNet benchmark
 
 - Generated: {results['metadata']['generated_at_utc']}
 - Hardware: {results['metadata']['gpu']}
 - Dataset: `{results['metadata']['dataset_repo']}@{results['metadata']['dataset_revision']}`
+- Git commit: `{results['metadata']['code']['commit']}`
+- Source checkout dirty: `{results['metadata']['code']['dirty']}`
 - Source bundle: `{results['metadata']['code']['source_bundle']['bundle_sha256']}`
 - Base Git commit: `{results['metadata']['code']['source_bundle']['base_git_commit']}`
 - Protocol: {results['metadata']['paired_runs']} paired, order-alternating passes; {results['metadata']['shards_per_pass']} pinned shards per pass; batch size {results['metadata']['batch_size']}
@@ -212,9 +228,13 @@ report = f"""# FoldPipe MD17 + SchNet benchmark
 | Mean I/O/compute overlap (s) | {seq['overlap_time_s']['mean']:.3f} | {fold['overlap_time_s']['mean']:.3f} |
 | Mean GPU wait time (s) | {seq['gpu_wait_time_s']['mean']:.3f} | {fold['gpu_wait_time_s']['mean']:.3f} |
 
-Paired mean speedup ratio: **{effect['speedup_ratio']['mean']:.4f}x** (95% bootstrap CI [{speed_ci['low']:.4f}, {speed_ci['high']:.4f}]).
+Geometric mean paired speedup: **{geometric['estimate']:.4f}x** (95% paired bootstrap CI in log-ratio space [{geometric_ci['low']:.4f}, {geometric_ci['high']:.4f}]).
 
-Paired mean time saved: **{effect['time_saved_s']['mean']:.3f} s** (95% bootstrap CI [{saved_ci['low']:.3f}, {saved_ci['high']:.3f}]). FoldPipe was faster in {effect['foldpipe_faster_fraction']:.0%} of pairs.
+Mean paired time saved: **{mean_saved['mean']:.3f} s** (95% paired bootstrap CI [{mean_saved_ci['low']:.3f}, {mean_saved_ci['high']:.3f}]).
+
+Median paired time saved: **{median_saved['median']:.3f} s** (95% paired bootstrap CI [{median_saved_ci['low']:.3f}, {median_saved_ci['high']:.3f}]). FoldPipe was faster in {effect['foldpipe_faster_fraction']:.0%} of pairs.
+
+For continuity with the earlier artifact, the arithmetic mean of paired speedup ratios was **{effect['speedup_ratio']['mean']:.4f}x**; it is retained as a supplementary, skew-sensitive summary rather than the headline ratio.
 
 {interpretation}
 
@@ -224,17 +244,21 @@ The JSON artifact contains every raw paired duration and per-shard download, des
 output_root = Path("/kaggle/working")
 shutil.copy2(results_path, output_root / "benchmark_stats_md17.json")
 shutil.copy2(plot_path, output_root / "benchmark_comparison_md17.png")
-shutil.copy2("source_manifest.json", output_root / "source_manifest.json")
+shutil.copy2(
+    "source_manifest.json",
+    output_root / "benchmark_source_manifest_md17.json",
+)
 (output_root / "benchmark_report_md17.md").write_text(report, encoding="utf-8")
 
 print(report)
 '''
+    run_code = run_code.replace("__DATASET_REVISION__", DATASET_REVISION)
 
     notebook = nbf.v4.new_notebook()
     notebook.cells = [
         nbf.v4.new_markdown_cell(
             "# FoldPipe MD17 + SchNet rigorous benchmark\n\n"
-            "Ten paired, order-alternating passes on five revision-pinned private MD17 shards. "
+            f"{PAIRED_RUNS} paired, order-alternating passes on five revision-pinned private MD17 shards. "
             "The notebook emits raw traces, bootstrap intervals, a plot, a source manifest, and a Markdown report."
         ),
         nbf.v4.new_code_cell(install_code),
@@ -253,9 +277,20 @@ print(report)
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--output-dir",
+        type=Path,
+        default=OUTPUT_DIR,
+        help="Directory for the generated Kaggle notebook and metadata",
+    )
+    args = parser.parse_args()
+    output_dir = args.output_dir.resolve()
+    output_dir.mkdir(parents=True, exist_ok=True)
+
     payloads, manifest = source_bundle()
     notebook = build_notebook(payloads, manifest)
-    nbf.write(notebook, OUTPUT_DIR / "benchmark.ipynb")
+    nbf.write(notebook, output_dir / "benchmark.ipynb")
 
     metadata = {
         "id": "dhirenkhatri/foldpipe-md17-rigorous-benchmark",
@@ -271,7 +306,7 @@ def main():
         "competition_sources": [],
         "kernel_sources": [],
     }
-    (OUTPUT_DIR / "kernel-metadata.json").write_text(
+    (output_dir / "kernel-metadata.json").write_text(
         json.dumps(metadata, indent=2) + "\n", encoding="utf-8"
     )
     print(json.dumps({"manifest": manifest, "metadata": metadata}, indent=2))

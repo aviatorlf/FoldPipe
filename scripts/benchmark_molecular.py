@@ -25,6 +25,7 @@ MAX_CHUNKS = int(os.environ.get("FOLDPIPE_MAX_CHUNKS", "5"))
 NUM_RUNS = int(os.environ.get("FOLDPIPE_NUM_RUNS", "10"))
 BOOTSTRAP_SAMPLES = int(os.environ.get("FOLDPIPE_BOOTSTRAP_SAMPLES", "20000"))
 HF_REPO_ID = os.environ.get("FOLDPIPE_HF_REPO_ID", "aviatorlf/md17-shards")
+HF_REVISION = os.environ.get("FOLDPIPE_HF_REVISION")
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 os.makedirs('results', exist_ok=True)
 
@@ -335,17 +336,28 @@ def run_foldpipe_stream(source, model, initial_state_dict, trace):
     return profiler, trace.wall_time
 
 
-def bootstrap_ci(data, samples=BOOTSTRAP_SAMPLES, seed=20260817):
+def bootstrap_ci(
+    data,
+    samples=BOOTSTRAP_SAMPLES,
+    seed=20260817,
+    statistic="mean",
+    method="percentile bootstrap",
+):
     """Deterministic nonparametric percentile-bootstrap confidence interval."""
     values = np.asarray(data, dtype=float)
+    if values.size == 0:
+        raise ValueError("bootstrap data must not be empty")
+    estimators = {"mean": np.mean, "median": np.median}
+    if statistic not in estimators:
+        raise ValueError(f"unsupported bootstrap statistic: {statistic}")
     rng = np.random.default_rng(seed)
     resampled = rng.choice(values, size=(samples, len(values)), replace=True)
-    estimates = np.mean(resampled, axis=1)
+    estimates = estimators[statistic](resampled, axis=1)
     low, high = np.percentile(estimates, [2.5, 97.5])
     return {
         "low": float(low),
         "high": float(high),
-        "method": "percentile bootstrap",
+        "method": method,
         "resamples": samples,
     }
 
@@ -357,6 +369,44 @@ def aggregate(data, seed=20260817):
         "median": float(statistics.median(values)),
         "sample_std": float(statistics.stdev(values)),
         "ci_95": bootstrap_ci(values, seed=seed),
+        "raw": values,
+    }
+
+
+def geometric_mean_speedup(speedup_ratios, seed=20260817):
+    """Geometric mean and paired bootstrap interval for positive runtime ratios."""
+    values = np.asarray(speedup_ratios, dtype=float)
+    if values.size == 0 or np.any(values <= 0):
+        raise ValueError("speedup ratios must be non-empty and strictly positive")
+    log_values = np.log(values)
+    log_ci = bootstrap_ci(
+        log_values,
+        seed=seed,
+        statistic="mean",
+        method="paired percentile bootstrap in log-ratio space",
+    )
+    return {
+        "estimate": float(np.exp(np.mean(log_values))),
+        "ci_95": {
+            **log_ci,
+            "low": float(np.exp(log_ci["low"])),
+            "high": float(np.exp(log_ci["high"])),
+        },
+        "raw": [float(value) for value in values],
+    }
+
+
+def median_paired_difference(differences, seed=20260817):
+    """Median paired difference with a bootstrap interval over paired effects."""
+    values = [float(value) for value in differences]
+    return {
+        "median": float(statistics.median(values)),
+        "ci_95": bootstrap_ci(
+            values,
+            seed=seed,
+            statistic="median",
+            method="paired percentile bootstrap for the median",
+        ),
         "raw": values,
     }
 
@@ -385,15 +435,24 @@ def git_metadata():
     manifest_path = os.environ.get("FOLDPIPE_SOURCE_MANIFEST")
     if manifest_path:
         with open(manifest_path, encoding="utf-8") as manifest_file:
-            metadata["source_bundle"] = json.load(manifest_file)
+            manifest = json.load(manifest_file)
+        metadata["source_bundle"] = manifest
+        if metadata["commit"] is None:
+            metadata["commit"] = manifest.get("base_git_commit")
+        if metadata["dirty"] is None:
+            metadata["dirty"] = manifest.get("working_tree_dirty")
     return metadata
 
 # ---------------------------------------------------------
 # EXECUTION & PLOTTING
 # ---------------------------------------------------------
 if __name__ == "__main__":
-    hf_source = HuggingFaceSource(repo_id=HF_REPO_ID, token=os.environ.get("HF_TOKEN"))
-    dataset_revision = hf_source.api.dataset_info(HF_REPO_ID).sha
+    hf_source = HuggingFaceSource(
+        repo_id=HF_REPO_ID,
+        token=os.environ.get("HF_TOKEN"),
+        revision=HF_REVISION,
+    )
+    dataset_revision = HF_REVISION or hf_source.api.dataset_info(HF_REPO_ID).sha
     hf_source.revision = dataset_revision
     all_files = list(itertools.islice(hf_source.iter_files(), MAX_CHUNKS))
     if len(all_files) != MAX_CHUNKS:
@@ -457,7 +516,7 @@ if __name__ == "__main__":
     hf_source.transfer_observer = None
 
     experiment_results = {
-        "schema_version": 2,
+        "schema_version": 3,
         "metadata": {
             "generated_at_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
             "code": git_metadata(),
@@ -467,13 +526,17 @@ if __name__ == "__main__":
             "gpu": torch.cuda.get_device_name(0) if torch.cuda.is_available() else None,
             "dataset_repo": HF_REPO_ID,
             "dataset_revision": dataset_revision,
+            "dataset_revision_requested": HF_REVISION,
             "shard_identifiers": all_files,
             "shards_per_pass": MAX_CHUNKS,
             "paired_runs": NUM_RUNS,
             "batch_size": 32,
             "warmup_protocol": "one untimed training batch from the first pinned shard",
             "order_protocol": "alternating paired order",
-            "confidence_interval": "95% percentile bootstrap",
+            "confidence_interval": (
+                "95% deterministic percentile bootstrap; paired differences are "
+                "resampled as pairs and speedup is bootstrapped in log-ratio space"
+            ),
         },
         "runs": run_records,
     }
@@ -524,7 +587,13 @@ if __name__ == "__main__":
     ]
     experiment_results["paired_effect"] = {
         "speedup_ratio": aggregate(paired_speedups, seed=20260897),
+        "geometric_mean_speedup": geometric_mean_speedup(
+            paired_speedups, seed=20260901
+        ),
         "time_saved_s": aggregate(paired_time_saved, seed=20260907),
+        "median_time_saved_s": median_paired_difference(
+            paired_time_saved, seed=20260911
+        ),
         "foldpipe_faster_fraction": float(
             np.mean(np.asarray(paired_time_saved, dtype=float) > 0)
         ),
