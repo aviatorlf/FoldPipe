@@ -1,4 +1,4 @@
-# FoldPipe: Eliminating GPU Starvation in Large-Scale Structural Biology
+# FoldPipe: Bounded Remote Streaming for Native Molecular-Data Shards
 
 [![Kaggle](https://kaggle.com/static/images/open-in-kaggle.svg)](https://kaggle.com/kernels/welcome?src=https://github.com/aviatorlf/FoldPipe/blob/main/notebooks/optimized_training.ipynb)
 
