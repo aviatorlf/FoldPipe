@@ -1,6 +1,33 @@
 # FoldPipe: Bounded Remote Streaming for Native Molecular-Data Shards
 
-[![Kaggle](https://kaggle.com/static/images/open-in-kaggle.svg)](https://kaggle.com/kernels/welcome?src=https://github.com/aviatorlf/FoldPipe/blob/main/notebooks/optimized_training.ipynb)
+[![Kaggle](https://kaggle.com/static/images/open-in-kaggle.svg)](https://kaggle.com/kernels/welcome?src=https://github.com/aviatorlf/FoldPipe/blob/main/notebooks/Quickstart.ipynb)
+
+FoldPipe is a small loader for streaming trusted, already-sharded PyTorch/PyG
+molecular data without first converting it into a different storage format.
+
+## Start Here
+
+Most users only need the library and one tutorial:
+
+```bash
+pip install "foldpipe @ git+https://github.com/aviatorlf/FoldPipe.git@v0.3.0"
+```
+
+- Open [`Quickstart.ipynb`](notebooks/Quickstart.ipynb) for a five-minute,
+  credential-free introduction.
+- Open [`Prion_Case_Study.ipynb`](notebooks/Prion_Case_Study.ipynb) for an
+  educational end-to-end example using the bundled 1QLX structure.
+
+## Repository Structure
+
+| Path | Audience | Purpose |
+| :--- | :--- | :--- |
+| [`foldpipe/`](foldpipe/) | Users | The installed core library and public API. Start here if you want to inspect the implementation. |
+| [`notebooks/`](notebooks/) | Users | Two maintained tutorials. Historical prototypes are clearly separated under `notebooks/archive/`. |
+| [`scripts/`](scripts/) and [`results/`](results/) | Peer reviewers | Reproducibility code, raw traces, reports, and benchmark packaging. Normal users can safely ignore these. |
+| [`tests/`](tests/) | Contributors | Automated checks that protect the core loader and benchmark logic. |
+| [`data/`](data/) | Tutorial users | Small bundled inputs and data-location notes; large trajectory shards remain remote. |
+| [`paper/`](paper/) | Readers and reviewers | Manuscript draft, references, and the plagiarism/novelty audit. |
 
 ## The Problem
 
@@ -64,9 +91,9 @@ Artifacts: [`benchmark report`](results/benchmark_report_md17.md), [`raw statist
 
 ### 1. Installation
 
-Install directly from PyPI (Recommended):
+Install the tagged GitHub release:
 ```bash
-pip install foldpipe
+pip install "foldpipe @ git+https://github.com/aviatorlf/FoldPipe.git@v0.3.0"
 ```
 
 *(Alternative)* Install from source:
@@ -115,4 +142,7 @@ for batch in loader:
 
 ## Kaggle Integration
 
-You do not need a supercomputer to run this pipeline. We have provided a fully optimized Kaggle template. Simply click the **"Open in Kaggle"** button at the top of this README to instantly spin up a GPU training environment for TorchMD-Net.
+The **Open in Kaggle** badge at the top opens the maintained Quickstart notebook.
+Its first example runs without credentials or a GPU; connect a remote source only
+after supplying your own revision-pinned dataset and secret through the platform's
+secret manager.

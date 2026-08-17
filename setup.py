@@ -11,9 +11,7 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/aviatorlf/FoldPipe",
-    packages=find_packages(
-        include=["foldpipe", "foldpipe.*", "scripts", "scripts.*"]
-    ),
+    packages=find_packages(include=["foldpipe", "foldpipe.*"]),
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
