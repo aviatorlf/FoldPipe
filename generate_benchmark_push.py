@@ -17,7 +17,7 @@ nb = {
    "metadata": {},
    "outputs": [],
    "source": [
-    "%pip install -q foldpipe==0.3.1 psutil matplotlib\n"
+    "%pip install -q foldpipe==0.3.2 psutil matplotlib\n"
    ]
   },
   {

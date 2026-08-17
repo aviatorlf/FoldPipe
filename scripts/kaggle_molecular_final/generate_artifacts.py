@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[2]
 OUTPUT_DIR = Path(__file__).resolve().parent
 PAIRED_RUNS = 20
 DATASET_REVISION = "f779686deb9217877dd7ddde99b2522bd441492a"
-FOLDPIPE_VERSION = "0.3.1"
+FOLDPIPE_VERSION = "0.3.2"
 SOURCE_PATHS = (
     "scripts/benchmark_molecular.py",
 )

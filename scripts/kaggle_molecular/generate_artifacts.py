@@ -5,7 +5,7 @@ import json
 os.makedirs('scripts/kaggle_molecular', exist_ok=True)
 nb = nbf.v4.new_notebook()
 
-code1 = """%pip install -q foldpipe==0.3.1 matplotlib psutil
+code1 = """%pip install -q foldpipe==0.3.2 matplotlib psutil
 import torch
 version = torch.__version__.split("+")[0]
 # Kaggle sometimes formats cuda as 12.1, we need cu121
