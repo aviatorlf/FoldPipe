@@ -27,6 +27,7 @@ setup(
         "google-api-python-client",
         "google-auth-oauthlib",
         "requests",
-        "huggingface_hub"
+        "huggingface_hub",
+        "nbformat>=5.0",
     ],
 )
