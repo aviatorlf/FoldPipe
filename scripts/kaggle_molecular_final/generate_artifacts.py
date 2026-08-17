@@ -14,11 +14,8 @@ ROOT = Path(__file__).resolve().parents[2]
 OUTPUT_DIR = Path(__file__).resolve().parent
 PAIRED_RUNS = 20
 DATASET_REVISION = "f779686deb9217877dd7ddde99b2522bd441492a"
+FOLDPIPE_VERSION = "0.3.1"
 SOURCE_PATHS = (
-    "foldpipe/__init__.py",
-    "foldpipe/loader.py",
-    "foldpipe/prion_loader.py",
-    "foldpipe/sources.py",
     "scripts/benchmark_molecular.py",
 )
 
@@ -50,6 +47,11 @@ def source_bundle():
         "base_git_commit": git_output("rev-parse", "HEAD"),
         "working_tree_dirty": bool(git_output("status", "--porcelain")),
         "bundle_sha256": bundle_hash.hexdigest(),
+        "foldpipe_distribution": {
+            "name": "foldpipe",
+            "version": FOLDPIPE_VERSION,
+            "index_url": f"https://pypi.org/project/foldpipe/{FOLDPIPE_VERSION}/",
+        },
         "files": files,
     }
     return payloads, manifest
@@ -66,16 +68,15 @@ subprocess.run(
         "pip",
         "install",
         "-q",
-        "torch-geometric",
-        "huggingface_hub",
+        "foldpipe==__FOLDPIPE_VERSION__",
         "matplotlib",
         "psutil",
-        "biopython",
-        "google-api-python-client",
-        "google-auth-oauthlib",
     ],
     check=True,
 )
+
+from importlib.metadata import version
+assert version("foldpipe") == "__FOLDPIPE_VERSION__"
 
 import torch
 
@@ -104,11 +105,13 @@ subprocess.run(
 )
 
 print({
+    "foldpipe": version("foldpipe"),
     "torch": torch.__version__,
     "cuda": torch.version.cuda,
     "gpu": torch.cuda.get_device_name(0),
 })
 """
+    install_code = install_code.replace("__FOLDPIPE_VERSION__", FOLDPIPE_VERSION)
 
     materialize_code = f"""import base64
 import json
@@ -158,11 +161,6 @@ run_environment.update({
     "FOLDPIPE_SOURCE_MANIFEST": str(Path.cwd() / "source_manifest.json"),
     "PYTHONUNBUFFERED": "1",
 })
-existing_pythonpath = run_environment.get("PYTHONPATH")
-run_environment["PYTHONPATH"] = os.pathsep.join(
-    item for item in (str(Path.cwd()), existing_pythonpath) if item
-)
-
 subprocess.run(
     [sys.executable, "scripts/benchmark_molecular.py"],
     env=run_environment,
@@ -212,10 +210,9 @@ report = f"""# FoldPipe MD17 + SchNet benchmark
 - Generated: {results['metadata']['generated_at_utc']}
 - Hardware: {results['metadata']['gpu']}
 - Dataset: `{results['metadata']['dataset_repo']}@{results['metadata']['dataset_revision']}`
-- Git commit: `{results['metadata']['code']['commit']}`
-- Source checkout dirty: `{results['metadata']['code']['dirty']}`
+- FoldPipe distribution: `{results['metadata']['code']['source_bundle']['foldpipe_distribution']['name']}=={results['metadata']['code']['source_bundle']['foldpipe_distribution']['version']}` from PyPI
 - Source bundle: `{results['metadata']['code']['source_bundle']['bundle_sha256']}`
-- Base Git commit: `{results['metadata']['code']['source_bundle']['base_git_commit']}`
+- Benchmark-driver Git commit: `{results['metadata']['code']['source_bundle']['base_git_commit']}`
 - Protocol: {results['metadata']['paired_runs']} paired, order-alternating passes; {results['metadata']['shards_per_pass']} pinned shards per pass; batch size {results['metadata']['batch_size']}
 - Warm-up: {results['metadata']['warmup_protocol']}
 
@@ -259,6 +256,7 @@ print(report)
         nbf.v4.new_markdown_cell(
             "# FoldPipe MD17 + SchNet rigorous benchmark\n\n"
             f"{PAIRED_RUNS} paired, order-alternating passes on five revision-pinned private MD17 shards. "
+            f"FoldPipe {FOLDPIPE_VERSION} is installed from PyPI; only the benchmark driver is embedded for provenance. "
             "The notebook emits raw traces, bootstrap intervals, a plot, a source manifest, and a Markdown report."
         ),
         nbf.v4.new_code_cell(install_code),

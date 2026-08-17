@@ -1,11 +1,8 @@
 import os
 import json
-import shutil
 
-os.makedirs("benchmark_notebook", exist_ok=True)
-if os.path.exists("benchmark_notebook/foldpipe"):
-    shutil.rmtree("benchmark_notebook/foldpipe")
-shutil.copytree("foldpipe", "benchmark_notebook/foldpipe")
+output_dir = "scripts/kaggle_benchmark"
+os.makedirs(output_dir, exist_ok=True)
 
 # Read the benchmark python script
 with open("scripts/benchmark_whitepaper.py", "r") as f:
@@ -20,7 +17,18 @@ nb = {
    "metadata": {},
    "outputs": [],
    "source": [
-    "!pip install torch==2.3.1 torchvision torchaudio google-api-python-client git+https://github.com/aviatorlf/FoldPipe.git\n"
+    "%pip install -q foldpipe==0.3.1 psutil matplotlib\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": None,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import os\n",
+    "from kaggle_secrets import UserSecretsClient\n",
+    "os.environ[\"HF_TOKEN\"] = UserSecretsClient().get_secret(\"HF_TOKEN\")\n"
    ]
   },
   {
@@ -43,27 +51,7 @@ nb = {
  "nbformat_minor": 4
 }
 
-with open("benchmark_notebook/foldpipe_benchmark.ipynb", "w") as f:
+with open(os.path.join(output_dir, "benchmark.ipynb"), "w") as f:
     json.dump(nb, f, indent=1)
 
-# Build the Kaggle metadata
-meta = {
-  "id": "dhirenkhatri/foldpipe-whitepaper-benchmarks",
-  "title": "FoldPipe Whitepaper Benchmarks",
-  "code_file": "foldpipe_benchmark.ipynb",
-  "language": "python",
-  "kernel_type": "notebook",
-  "is_private": "true",
-  "enable_gpu": "true",
-  "accelerator": "nvidiaTeslaT4",
-  "enable_internet": "true",
-  "dataset_sources": ["dhirenkhatri/gcp-secret-dataset"],
-  "competition_sources": [],
-  "kernel_sources": [],
-  "model_sources": []
-}
-
-with open("benchmark_notebook/kernel-metadata.json", "w") as f:
-    json.dump(meta, f, indent=1)
-
-print("Created benchmark_notebook with standalone embedded notebook and metadata.")
+print(f"Created {output_dir}/benchmark.ipynb with the PyPI release and embedded benchmark driver.")
