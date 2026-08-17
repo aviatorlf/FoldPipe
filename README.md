@@ -24,7 +24,7 @@ The utilization measurements belong to different experiments and should not be c
 | Experiment | Workload | FoldPipe mean GPU utilization | Interpretation |
 | :--- | :--- | ---: | :--- |
 | Controlled crossover | Deliberately deep synthetic compute | >90% in the compute-dominant regime | Demonstrates that prefetch can mask I/O when compute time is long enough. |
-| Real MD17 benchmark | SchNet energy-and-force training, ten paired order-alternating runs | 37.65% | Real-workload mean across FoldPipe passes; high run-to-run variance remains. |
+| Real MD17 benchmark | SchNet energy-and-force training, 20 paired order-alternating runs | 37.70% | Real-workload mean across FoldPipe passes; high run-to-run variance remains. |
 
 ## Empirical Whitepaper Benchmark
 
@@ -39,26 +39,26 @@ To evaluate when asynchronous prefetch masks network I/O, we benchmarked FoldPip
 
 ### Kaggle T4 MD17 Benchmark
 
-The final private Kaggle kernel completed ten paired, order-alternating measurements of a real SchNet energy-and-force workload streaming revision-pinned MD17 shards from Hugging Face. Each timed measurement is a **5-shard benchmark pass**, not a full-dataset epoch. With 5,000 structures per shard, each pass processes 25,000 structures.
+The final private Kaggle kernel completed 20 paired, order-alternating measurements of a real SchNet energy-and-force workload streaming revision-pinned MD17 shards from Hugging Face. Each timed measurement is a **5-shard benchmark pass**, not a full-dataset epoch. With 5,000 structures per shard, each pass processes 25,000 structures. Across both pipelines, the protocol recorded 40 passes, 200 shard traces, and 1,000,000 repeated structure-visits.
 
 | Metric | Sequential | FoldPipe |
 | :--- | ---: | ---: |
-| Mean pass time | 155.52 s | 107.59 s |
-| 95% bootstrap CI for mean time | 113.64–203.16 s | 65.44–156.03 s |
-| Median pass time | 138.71 s | 89.47 s |
-| Time standard deviation | 76.99 s | 77.50 s |
-| Mean sampled GPU utilization | 20.43% | 37.65% |
-| Mean peak RSS | 1.938 GiB | 2.037 GiB |
-| Mean I/O/compute overlap | 0.00 s | 15.26 s |
-| Mean GPU wait time | 128.61 s | 79.60 s |
+| Mean pass time | 83.37 s | 76.78 s |
+| 95% bootstrap CI for mean time | 67.87–101.06 s | 64.86–89.44 s |
+| Median pass time | 75.27 s | 75.97 s |
+| Time standard deviation | 39.86 s | 28.46 s |
+| Mean sampled GPU utilization | 36.17% | 37.70% |
+| Mean peak RSS | 1.935 GiB | 2.064 GiB |
+| Mean I/O/compute overlap | 0.00 s | 16.33 s |
+| Mean GPU wait time | 56.50 s | 48.65 s |
 
-FoldPipe was faster in 7 of 10 pairs. The arithmetic mean of paired speedup ratios was 2.312× with a 95% percentile-bootstrap interval of 1.284×–3.465×. The additive paired effect was 47.93 seconds saved on average, but its interval was −12.22 to 103.44 seconds and therefore included zero. The ratio and additive estimands disagree under substantial run-to-run network variability; the defensible conclusion is that FoldPipe improved the observed means and demonstrated real I/O/compute overlap, not that this run establishes a universal speedup.
+FoldPipe was faster in 11 of 20 pairs. The primary multiplicative estimand, the geometric mean paired speedup, was 1.059× with a 95% paired bootstrap interval of 0.878×–1.288×. Mean paired time saved was 6.59 seconds (95% CI −7.69 to 21.11 seconds), and median paired time saved was 3.45 seconds (95% CI −13.48 to 22.89 seconds). All three intervals include their no-effect values, so this run is **inconclusive about a speed advantage**. The positive 16.33-second mean overlap directly confirms that the asynchronous mechanism overlaps I/O and compute, but that mechanism measurement must not be promoted into a universal throughput claim under the observed network variability.
 
-The benchmark pinned `aviatorlf/md17-shards` to revision `f779686deb9217877dd7ddde99b2522bd441492a` and embedded a source bundle with SHA-256 `0ed7e4c583621edc793234e51dafc3756221f7e2337e1d86708c1d5f25fcad39`. The raw JSON preserves all paired durations plus per-shard download, deserialization, training, payload-byte, overlap, and wait-time traces.
+The benchmark pinned `aviatorlf/md17-shards` to revision `f779686deb9217877dd7ddde99b2522bd441492a`, executed clean Git commit `16fdbb26b00f9721ce4034335ce0ee12bda77720`, and embedded a source bundle with SHA-256 `4fc3f6d712557822efc0d5d71aaa616b0fe30f578631726ef60d6a0fe73b32c0`. The raw JSON preserves all paired durations plus per-shard download, deserialization, training, payload-byte, overlap, and wait-time traces.
 
 ![MD17 SchNet benchmark](results/benchmark_comparison_md17.png)
 
-Artifacts: [`benchmark report`](results/benchmark_report_md17.md), [`raw statistics and traces`](results/benchmark_stats_md17.json), [`source manifest`](results/benchmark_source_manifest_md17.json), [`Kaggle execution log`](results/foldpipe-md17-rigorous-benchmark-v6.log), and the [Kaggle version 6 kernel](https://www.kaggle.com/code/dhirenkhatri/foldpipe-md17-rigorous-benchmark).
+Artifacts: [`benchmark report`](results/benchmark_report_md17.md), [`raw statistics and traces`](results/benchmark_stats_md17.json), [`source manifest`](results/benchmark_source_manifest_md17.json), [`Kaggle execution log`](results/foldpipe-md17-rigorous-benchmark-v8.log), and the [Kaggle version 8 kernel](https://www.kaggle.com/code/dhirenkhatri/foldpipe-md17-rigorous-benchmark).
 
 ## Quickstart & Usage
 

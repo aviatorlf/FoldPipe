@@ -1,6 +1,6 @@
 {
-  "base_git_commit": "f19735f10935fd44a3fbf4bfee0660adf83a111b",
-  "bundle_sha256": "0ed7e4c583621edc793234e51dafc3756221f7e2337e1d86708c1d5f25fcad39",
+  "base_git_commit": "16fdbb26b00f9721ce4034335ce0ee12bda77720",
+  "bundle_sha256": "4fc3f6d712557822efc0d5d71aaa616b0fe30f578631726ef60d6a0fe73b32c0",
   "files": {
     "foldpipe/__init__.py": {
       "bytes": 132,
@@ -19,10 +19,10 @@
       "sha256": "9e49b646a1d24eae9d7b0e2dd752e5cc1ad9fc9623dc24682ecbeb8eab213a37"
     },
     "scripts/benchmark_molecular.py": {
-      "bytes": 21170,
-      "sha256": "7dcadaa67c52c82c79da461430a1a1622f8be90bcae70989b2522937d9252037"
+      "bytes": 23558,
+      "sha256": "edb8df3784fcb23a695f4eb295b2b880529ba4e12dd0cc80b2a4c5a2dd61cf5d"
     }
   },
   "format_version": 1,
-  "working_tree_dirty": true
+  "working_tree_dirty": false
 }

@@ -1,34 +1,41 @@
 # FoldPipe MD17 + SchNet benchmark
 
-- Generated: 2026-08-16T21:05:13.461132+00:00
+- Generated: 2026-08-17T04:59:36.371481+00:00
 - Hardware: Tesla T4
 - Dataset: `aviatorlf/md17-shards@f779686deb9217877dd7ddde99b2522bd441492a`
-- Source bundle: `0ed7e4c583621edc793234e51dafc3756221f7e2337e1d86708c1d5f25fcad39`
-- Base Git commit: `f19735f10935fd44a3fbf4bfee0660adf83a111b`
-- Kaggle kernel: [`dhirenkhatri/foldpipe-md17-rigorous-benchmark`, version 6](https://www.kaggle.com/code/dhirenkhatri/foldpipe-md17-rigorous-benchmark)
-- Protocol: 10 paired, order-alternating passes; 5 pinned shards per pass; batch size 32
+- Git commit: `16fdbb26b00f9721ce4034335ce0ee12bda77720`
+- Source checkout dirty: `False`
+- Source bundle: `4fc3f6d712557822efc0d5d71aaa616b0fe30f578631726ef60d6a0fe73b32c0`
+- Base Git commit: `16fdbb26b00f9721ce4034335ce0ee12bda77720`
+- Kaggle kernel: [`dhirenkhatri/foldpipe-md17-rigorous-benchmark`, version 8](https://www.kaggle.com/code/dhirenkhatri/foldpipe-md17-rigorous-benchmark)
+- Protocol: 20 paired, order-alternating passes; 5 pinned shards per pass; batch size 32
 - Warm-up: one untimed training batch from the first pinned shard
+- Validation scope: 40 timed pipeline passes, 200 shard traces, and 1,000,000 repeated structure-visits
 
 | Metric | Sequential | FoldPipe |
 | --- | ---: | ---: |
-| Mean time (s) | 155.518 | 107.587 |
-| 95% bootstrap CI, mean time (s) | [113.641, 203.158] | [65.444, 156.030] |
-| Mean peak RSS (GiB) | 1.938 | 2.037 |
-| Mean sampled GPU utilization (%) | 20.431 | 37.649 |
-| Mean I/O/compute overlap (s) | 0.000 | 15.259 |
-| Mean GPU wait time (s) | 128.606 | 79.596 |
+| Mean time (s) | 83.372 | 76.780 |
+| 95% bootstrap CI, mean time (s) | [67.868, 101.057] | [64.859, 89.440] |
+| Mean peak RSS (GiB) | 1.935 | 2.064 |
+| Mean sampled GPU utilization (%) | 36.172 | 37.703 |
+| Mean I/O/compute overlap (s) | 0.000 | 16.333 |
+| Mean GPU wait time (s) | 56.503 | 48.652 |
 
-Paired mean speedup ratio: **2.3122x** (95% bootstrap CI [1.2835, 3.4650]).
+Geometric mean paired speedup: **1.0587x** (95% paired bootstrap CI in log-ratio space [0.8776, 1.2880]).
 
-Paired mean time saved: **47.931 s** (95% bootstrap CI [-12.225, 103.440]). FoldPipe was faster in 70% of pairs.
+Mean paired time saved: **6.591 s** (95% paired bootstrap CI [-7.692, 21.108]).
 
-The mean-ratio interval excludes 1 in FoldPipe's favor, but the additive time-saved interval includes 0. These estimands disagree under high run-to-run variability, so this result supports improved observed means and the overlap mechanism but should not be presented as a universal speedup.
+Median paired time saved: **3.453 s** (95% paired bootstrap CI [-13.477, 22.888]). FoldPipe was faster in 55% of pairs.
+
+For continuity with the earlier artifact, the arithmetic mean of paired speedup ratios was **1.1705x**; it is retained as a supplementary, skew-sensitive summary rather than the headline ratio.
+
+All three paired intervals include their no-effect values; this run is inconclusive about a speed advantage.
 
 The JSON artifact contains every raw paired duration and per-shard download, deserialization, training, payload-byte, overlap, and wait-time trace.
 
 ## Artifact checksums
 
-- `benchmark_stats_md17.json`: `56e34a33421eb31e1a67348549c32ecaecbeded2b78116db270a17fc6a23c7f3`
-- `benchmark_comparison_md17.png`: `cf26d005fa62788464f196ecbcff82f256ddc81d7d4ab2bce4ef88ce3b307a72`
-- `benchmark_source_manifest_md17.json`: `a2880551c8175986cc3207532686442458e179c30423f179e57092033aded9d3`
-- `foldpipe-md17-rigorous-benchmark-v6.log`: `f601d6f2f44398845f56102685ff42ce9871a3c6a025d4e7cbbb0ddd1c960a6c`
+- `benchmark_stats_md17.json`: `0832fa4180a95c78d7a017f0c960f3e4d7273c3e0226428734197d71697df21d`
+- `benchmark_comparison_md17.png`: `109e3783fad92e9dace75c80e205ad4ee2c20fb779ef70261951db901a316780`
+- `benchmark_source_manifest_md17.json`: `5658ca6676a4eb055d6bb914d54e1918928a82b7e45b2a6150a8f9049be39a68`
+- `foldpipe-md17-rigorous-benchmark-v8.log`: `cdbc4b30e85ef5c741d6d404945bd3b6b317d7569ec073b952adcf809f0f3f1d`
