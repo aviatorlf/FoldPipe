@@ -128,40 +128,39 @@ class HuggingFaceSource(Source):
             "bytes_downloaded": 0,
         }
 
-        last_exc = None
-        for attempt in range(1, self.retries + 1):
-            try:
-                # Stream directly to RAM via requests, avoiding local disk cache and
-                # double-materialization. Count payload bytes for benchmark tracing.
-                response = requests.get(url, headers=headers, stream=True, timeout=self.timeout)
-                response.raise_for_status()
-
-                fh = io.BytesIO()
-                for block in response.iter_content(chunk_size=1024 * 1024):
-                    if block:
-                        event["bytes_downloaded"] += len(block)
-                        fh.write(block)
-
-                event["download_finish"] = time.perf_counter()
-                fh.seek(0)
-                chunk = torch.load(fh, map_location='cpu', weights_only=False)
-                event["deserialize_finish"] = time.perf_counter()
-                return chunk
-            except (requests.exceptions.Timeout, requests.exceptions.ConnectionError) as exc:
-                last_exc = exc
-                if attempt < self.retries:
-                    backoff = 2 ** (attempt - 1)
-                    time.sleep(backoff)
-                    # Reset byte counter for retry
-                    event["bytes_downloaded"] = 0
-                    continue
-                raise
-            except Exception as exc:
-                event["error"] = type(exc).__name__
-                raise
-            finally:
-                if self.transfer_observer is not None:
-                    self.transfer_observer(event.copy())
+        try:
+            for attempt in range(1, self.retries + 1):
+                try:
+                    # Stream directly to RAM via requests, avoiding local disk cache and
+                    # double-materialization. Count payload bytes for benchmark tracing.
+                    response = requests.get(url, headers=headers, stream=True, timeout=self.timeout)
+                    response.raise_for_status()
+    
+                    fh = io.BytesIO()
+                    for block in response.iter_content(chunk_size=1024 * 1024):
+                        if block:
+                            event["bytes_downloaded"] += len(block)
+                            fh.write(block)
+    
+                    event["download_finish"] = time.perf_counter()
+                    fh.seek(0)
+                    chunk = torch.load(fh, map_location='cpu', weights_only=False)
+                    event["deserialize_finish"] = time.perf_counter()
+                    return chunk
+                except (requests.exceptions.Timeout, requests.exceptions.ConnectionError):
+                    if attempt < self.retries:
+                        backoff = 2 ** (attempt - 1)
+                        time.sleep(backoff)
+                        # Reset byte counter for retry
+                        event["bytes_downloaded"] = 0
+                        continue
+                    raise
+        except Exception as exc:
+            event["error"] = type(exc).__name__
+            raise
+        finally:
+            if self.transfer_observer is not None:
+                self.transfer_observer(event.copy())
 
 class SyntheticLatencySource(Source):
     """

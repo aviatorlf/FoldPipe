@@ -11,9 +11,8 @@
 
 \title{FoldPipe: Bounded Remote Streaming of Native Molecular-Graph Shards\\
 with Conditional I/O--Compute Overlap}
-\author{Dhiren Khatri\\
-\small Vivekanand Education Society's Institute of Technology (VESIT)\\
-\small \url{https://github.com/aviatorlf/FoldPipe}}
+\author{Dhiren Mukesh Khatri\\
+\small Independent Researcher}
 \date{Draft of August 17, 2026}
 
 \begin{document}
@@ -120,9 +119,10 @@ automatic optimization beyond FoldPipe's scope.
 \subsection{Formats, remote streaming, and graph systems}
 
 WebDataset packages samples into tar shards designed for sequential streaming
-from local or remote storage~\cite{aizman2020webdataset}.  Hugging Face Datasets
-offers iterable streaming, sharding, and buffered shuffle for supported dataset
-formats~\cite{huggingfacehub}.  FoldPipe's distinction is compatibility,
+from local or remote storage~\cite{aizman2020webdataset}. The Hugging Face Hub
+provides revision-addressable repository storage and remote file
+retrieval~\cite{huggingfacehub}. FoldPipe uses that storage boundary to
+retrieve native \texttt{.pt} shards directly. FoldPipe's distinction is compatibility,
 not superior generality: it accepts already-produced \texttt{.pt} shard objects
 without a separate format migration.  This also gives up capabilities such as
 sample-level streaming within a shard, rich transformation graphs, automatic
@@ -246,7 +246,7 @@ deterministic percentile bootstrap of paired log ratios with 20,000 resamples.
 Paired arithmetic time savings and their median are secondary estimands with
 paired percentile-bootstrap intervals.  Pipeline-specific means are reported
 descriptively.  The full raw traces and seeds are included in the v0.3.0
-artifact~\cite{khatri2026foldpipe,khatri2026artifact}.
+artifact~\cite{khatri2026foldpipe}.
 
 The executed source tree was clean commit
 \texttt{16fdbb26b00f9721ce4034335ce0ee12bda77720}.  A source manifest records a

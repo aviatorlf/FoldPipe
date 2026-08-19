@@ -67,19 +67,7 @@ Artifacts: [`benchmark report`](results/benchmark_report_md17.md), [`raw statist
 
 Install directly from PyPI (recommended):
 ```bash
-pip install foldpipe
-```
-
-With Google Drive support:
-```bash
-pip install foldpipe[drive]
-```
-
-*(Alternative)* Install from source:
-```bash
-git clone https://github.com/aviatorlf/FoldPipe.git
-cd FoldPipe
-pip install -e ".[dev]"
+pip install foldpipe==0.3.2
 ```
 
 ### 2. Standard PyTorch Training Loop
