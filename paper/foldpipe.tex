@@ -12,7 +12,7 @@
 \title{FoldPipe: Bounded Remote Streaming of Native Molecular-Graph Shards\\
 with Conditional I/O--Compute Overlap}
 \author{Dhiren Khatri\\
-\small Affiliation and ORCID to be confirmed\\
+\small Vivekanand Education Society's Institute of Technology (VESIT)\\
 \small \url{https://github.com/aviatorlf/FoldPipe}}
 \date{Draft of August 17, 2026}
 
@@ -60,8 +60,9 @@ corpus may be larger than the runner's memory or persistent disk budget.
 General-purpose solutions already cover much of this design space.  PyTorch
 provides multiprocessing data loading~\cite{paszke2019pytorch}; PyG provides
 database-backed on-disk datasets and host-to-device prefetch
-utilities~\cite{pygondiskdocs,pygloaderdocs}; Hugging Face supports iterable
-streaming~\cite{huggingfacestreaming}; and WebDataset uses streaming tar
+utilities~\cite{pygondiskdocs,pygloaderdocs}; Hugging Face provides
+revision-addressable remote repository storage and file
+retrieval~\cite{huggingfacehub}; and WebDataset uses streaming tar
 shards~\cite{aizman2020webdataset}.  Larger systems optimize preprocessing,
 caching, and out-of-core graph access at substantially greater scope
 \cite{murray2021tfdata,mohan2021stalls,graur2022cachew,waleffe2023mariusgnn}.
@@ -121,7 +122,7 @@ automatic optimization beyond FoldPipe's scope.
 WebDataset packages samples into tar shards designed for sequential streaming
 from local or remote storage~\cite{aizman2020webdataset}.  Hugging Face Datasets
 offers iterable streaming, sharding, and buffered shuffle for supported dataset
-formats~\cite{huggingfacestreaming}.  FoldPipe's distinction is compatibility,
+formats~\cite{huggingfacehub}.  FoldPipe's distinction is compatibility,
 not superior generality: it accepts already-produced \texttt{.pt} shard objects
 without a separate format migration.  This also gives up capabilities such as
 sample-level streaming within a shard, rich transformation graphs, automatic
@@ -371,7 +372,9 @@ submission.
 The GitHub release contains raw JSON for every pair and shard, a generated
 report, plot, execution log, and source manifest.  The Kaggle artifact records
 the exact data revision and executed code bundle.  The repository is MIT
-licensed~\cite{khatri2026foldpipe}.
+licensed~\cite{khatri2026foldpipe}.  The current software release is FoldPipe
+0.3.2; the MD17 measurements analyzed here are preserved in the frozen v0.3.0
+research artifact.
 
 The manuscript deliberately attributes prefetching and input pipelining to
 prior work, uses no third-party figure, and reports the inconclusive paired

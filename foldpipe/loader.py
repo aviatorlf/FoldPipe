@@ -2,9 +2,12 @@ import concurrent.futures
 
 class AsyncFoldPipeLoader:
     """
-    True O(1) bounded-memory asynchronous streaming dataloader.
-    Downloads native PyTorch .pt chunk files via a generic Source backend in the background.
-    Hides network I/O latency behind GPU computation.
+    Bounded-working-set asynchronous shard iterator.
+
+    Keeps a constant number of shard payloads live with respect to total
+    dataset shard count, assuming individual shards are bounded.  Downloads
+    native PyTorch .pt chunk files via a generic Source backend in a
+    background thread and yields batches to the training loop.
     """
     def __init__(self, source, batch_size=128, batch_fn=None):
         self.source = source
@@ -44,7 +47,7 @@ class AsyncFoldPipeLoader:
                 for batch in self.batch_fn(chunk_tensor):
                     yield batch
                 
-                # Explicitly delete the chunk (relying on Python GC for O(1) bound)
+                # Drop the consumer's reference to the completed shard.
                 del chunk_tensor
                 
                 if not has_next:

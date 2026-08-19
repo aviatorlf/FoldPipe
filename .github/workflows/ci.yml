@@ -46,3 +46,35 @@ jobs:
         pip install build twine
         python -m build
         python -m twine check dist/*
+
+  wheel-smoke-test:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+
+    - name: Build wheel
+      run: |
+        python -m pip install --upgrade pip build
+        python -m build
+
+    - name: Smoke test in clean venv
+      run: |
+        python -m venv /tmp/foldpipe-test
+        source /tmp/foldpipe-test/bin/activate
+        pip install dist/*.whl
+        python - <<'PY'
+        from foldpipe import AsyncFoldPipeLoader
+        from foldpipe.sources import SyntheticLatencySource
+        loader = AsyncFoldPipeLoader(
+            SyntheticLatencySource(num_chunks=2, latency_ms=0, chunk_size=20),
+            batch_size=5,
+        )
+        assert len(list(loader)) == 8
+        print("wheel smoke test passed")
+        PY
