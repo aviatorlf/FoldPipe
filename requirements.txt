@@ -1,0 +1,18 @@
+# Core runtime
+torch>=2.0.0
+torch-geometric>=2.3.0
+requests
+huggingface_hub
+
+# Google Drive source
+google-api-python-client
+google-auth-oauthlib
+
+# Tutorial (PrionStreamer)
+biopython>=1.79
+
+# Benchmark scripts
+torchmd-net
+nbformat>=5.0
+matplotlib
+psutil

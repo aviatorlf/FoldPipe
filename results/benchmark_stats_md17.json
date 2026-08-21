@@ -1,0 +1,3743 @@
+{
+    "schema_version": 3,
+    "metadata": {
+        "generated_at_utc": "2026-08-17T04:59:36.371481+00:00",
+        "code": {
+            "commit": "16fdbb26b00f9721ce4034335ce0ee12bda77720",
+            "dirty": false,
+            "source_bundle": {
+                "base_git_commit": "16fdbb26b00f9721ce4034335ce0ee12bda77720",
+                "bundle_sha256": "4fc3f6d712557822efc0d5d71aaa616b0fe30f578631726ef60d6a0fe73b32c0",
+                "files": {
+                    "foldpipe/__init__.py": {
+                        "bytes": 132,
+                        "sha256": "e3a8d8a89f6aa3c93b755028d0816e47a27889346a37ebc92c7a9b071fe11710"
+                    },
+                    "foldpipe/loader.py": {
+                        "bytes": 1965,
+                        "sha256": "e3ae29bf11457cc11eb509d181a9fc1fde1089cce2c355e80c9a7915e02b711d"
+                    },
+                    "foldpipe/prion_loader.py": {
+                        "bytes": 1468,
+                        "sha256": "49f8ec2932268d8d02f6acc4d645414a2411bfa7293405dc6c11a5e5033180b5"
+                    },
+                    "foldpipe/sources.py": {
+                        "bytes": 6527,
+                        "sha256": "9e49b646a1d24eae9d7b0e2dd752e5cc1ad9fc9623dc24682ecbeb8eab213a37"
+                    },
+                    "scripts/benchmark_molecular.py": {
+                        "bytes": 23558,
+                        "sha256": "edb8df3784fcb23a695f4eb295b2b880529ba4e12dd0cc80b2a4c5a2dd61cf5d"
+                    }
+                },
+                "format_version": 1,
+                "working_tree_dirty": false
+            }
+        },
+        "python": "3.12.13",
+        "torch": "2.10.0+cu128",
+        "device": "cuda",
+        "gpu": "Tesla T4",
+        "dataset_repo": "aviatorlf/md17-shards",
+        "dataset_revision": "f779686deb9217877dd7ddde99b2522bd441492a",
+        "dataset_revision_requested": "f779686deb9217877dd7ddde99b2522bd441492a",
+        "shard_identifiers": [
+            "checkpoint_batch_0000.pt",
+            "checkpoint_batch_0001.pt",
+            "checkpoint_batch_0002.pt",
+            "checkpoint_batch_0003.pt",
+            "checkpoint_batch_0004.pt"
+        ],
+        "shards_per_pass": 5,
+        "paired_runs": 20,
+        "batch_size": 32,
+        "warmup_protocol": "one untimed training batch from the first pinned shard",
+        "order_protocol": "alternating paired order",
+        "confidence_interval": "95% deterministic percentile bootstrap; paired differences are resampled as pairs and speedup is bootstrapped in log-ratio space"
+    },
+    "runs": [
+        {
+            "run_index": 0,
+            "order": [
+                "sequential",
+                "foldpipe"
+            ],
+            "pipelines": {
+                "sequential": {
+                    "pipeline": "sequential",
+                    "run_index": 0,
+                    "summary": {
+                        "wall_time_s": 158.37197423699996,
+                        "io_time_s": 129.55179290099989,
+                        "deserialize_time_s": 2.687015612000039,
+                        "compute_time_s": 25.970774140000003,
+                        "overlap_time_s": 0.0,
+                        "gpu_wait_time_s": 132.376328451,
+                        "bytes_downloaded": 724378957,
+                        "structures": 25000
+                    },
+                    "shards": [
+                        {
+                            "shard_index": 0,
+                            "identifier": "checkpoint_batch_0000.pt",
+                            "download_start_s": 0.0005641220000143221,
+                            "download_finish_s": 21.32438113799998,
+                            "deserialize_finish_s": 21.919061216999978,
+                            "training_start_s": 21.927118382000003,
+                            "training_finish_s": 27.083552080000004,
+                            "bytes_downloaded": 144867241,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 1,
+                            "identifier": "checkpoint_batch_0001.pt",
+                            "download_start_s": 27.106930363999993,
+                            "download_finish_s": 49.64559772399997,
+                            "deserialize_finish_s": 50.04310518,
+                            "training_start_s": 50.05109534899998,
+                            "training_finish_s": 55.247030001999974,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 2,
+                            "identifier": "checkpoint_batch_0002.pt",
+                            "download_start_s": 55.270972383000014,
+                            "download_finish_s": 104.65462697199996,
+                            "deserialize_finish_s": 105.22064885999998,
+                            "training_start_s": 105.22889523200001,
+                            "training_finish_s": 110.40480561999999,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 3,
+                            "identifier": "checkpoint_batch_0003.pt",
+                            "download_start_s": 110.428871002,
+                            "download_finish_s": 129.898274474,
+                            "deserialize_finish_s": 130.461891326,
+                            "training_start_s": 130.470540794,
+                            "training_finish_s": 135.674746315,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 4,
+                            "identifier": "checkpoint_batch_0004.pt",
+                            "download_start_s": 135.69923567799998,
+                            "download_finish_s": 152.53548614199997,
+                            "deserialize_finish_s": 153.10067547899996,
+                            "training_start_s": 153.10881271099998,
+                            "training_finish_s": 158.347102591,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        }
+                    ]
+                },
+                "foldpipe": {
+                    "pipeline": "foldpipe",
+                    "run_index": 0,
+                    "summary": {
+                        "wall_time_s": 92.33069372199998,
+                        "io_time_s": 84.23318171100021,
+                        "deserialize_time_s": 2.7192798319997564,
+                        "compute_time_s": 26.584969721999926,
+                        "overlap_time_s": 21.279826162999996,
+                        "gpu_wait_time_s": 65.72257233500005,
+                        "bytes_downloaded": 724378957,
+                        "structures": 25000
+                    },
+                    "shards": [
+                        {
+                            "shard_index": 0,
+                            "identifier": "checkpoint_batch_0000.pt",
+                            "download_start_s": 0.0007038580000084949,
+                            "download_finish_s": 16.454530358,
+                            "deserialize_finish_s": 17.03075227300002,
+                            "training_start_s": 17.043503776000023,
+                            "training_finish_s": 22.33629774000002,
+                            "bytes_downloaded": 144867241,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 1,
+                            "identifier": "checkpoint_batch_0001.pt",
+                            "download_start_s": 17.041328824999994,
+                            "download_finish_s": 33.41790660100003,
+                            "deserialize_finish_s": 34.00681192100001,
+                            "training_start_s": 34.01914798300004,
+                            "training_finish_s": 39.33197895500001,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 2,
+                            "identifier": "checkpoint_batch_0002.pt",
+                            "download_start_s": 34.01650440100002,
+                            "download_finish_s": 51.28007293200005,
+                            "deserialize_finish_s": 51.86927595099996,
+                            "training_start_s": 51.88080370299997,
+                            "training_finish_s": 57.22801372499998,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 3,
+                            "identifier": "checkpoint_batch_0003.pt",
+                            "download_start_s": 51.878465948999974,
+                            "download_finish_s": 69.97999638300007,
+                            "deserialize_finish_s": 70.37391816299998,
+                            "training_start_s": 70.38594196200006,
+                            "training_finish_s": 75.71293316700007,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 4,
+                            "identifier": "checkpoint_batch_0004.pt",
+                            "download_start_s": 70.38353756200001,
+                            "download_finish_s": 86.42121603200007,
+                            "deserialize_finish_s": 86.99224383,
+                            "training_start_s": 87.00239849800005,
+                            "training_finish_s": 92.30754205699998,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "run_index": 1,
+            "order": [
+                "foldpipe",
+                "sequential"
+            ],
+            "pipelines": {
+                "foldpipe": {
+                    "pipeline": "foldpipe",
+                    "run_index": 1,
+                    "summary": {
+                        "wall_time_s": 139.022944263,
+                        "io_time_s": 130.6504882359999,
+                        "deserialize_time_s": 2.913583520999964,
+                        "compute_time_s": 26.91540520200033,
+                        "overlap_time_s": 21.526804351000237,
+                        "gpu_wait_time_s": 112.08294565999972,
+                        "bytes_downloaded": 724378957,
+                        "structures": 25000
+                    },
+                    "shards": [
+                        {
+                            "shard_index": 0,
+                            "identifier": "checkpoint_batch_0000.pt",
+                            "download_start_s": 0.0004842910000206757,
+                            "download_finish_s": 63.358331760000056,
+                            "deserialize_finish_s": 63.94328180000002,
+                            "training_start_s": 63.954380485,
+                            "training_finish_s": 69.29518622500007,
+                            "bytes_downloaded": 144867241,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 1,
+                            "identifier": "checkpoint_batch_0001.pt",
+                            "download_start_s": 63.952176535000035,
+                            "download_finish_s": 78.50812059099997,
+                            "deserialize_finish_s": 79.07919650400004,
+                            "training_start_s": 79.09041344299999,
+                            "training_finish_s": 84.47489798100003,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 2,
+                            "identifier": "checkpoint_batch_0002.pt",
+                            "download_start_s": 79.08785177900006,
+                            "download_finish_s": 96.59486311800003,
+                            "deserialize_finish_s": 97.17750485900001,
+                            "training_start_s": 97.188799851,
+                            "training_finish_s": 102.57921331500006,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 3,
+                            "identifier": "checkpoint_batch_0003.pt",
+                            "download_start_s": 97.18644063800002,
+                            "download_finish_s": 116.020514402,
+                            "deserialize_finish_s": 116.61304348099998,
+                            "training_start_s": 116.62428495699999,
+                            "training_finish_s": 122.03538556600006,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 4,
+                            "identifier": "checkpoint_batch_0004.pt",
+                            "download_start_s": 116.62167513500003,
+                            "download_finish_s": 133.017286743,
+                            "deserialize_finish_s": 133.59967349099998,
+                            "training_start_s": 133.60975001099996,
+                            "training_finish_s": 138.99835086200005,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        }
+                    ]
+                },
+                "sequential": {
+                    "pipeline": "sequential",
+                    "run_index": 1,
+                    "summary": {
+                        "wall_time_s": 198.432615264,
+                        "io_time_s": 168.67119749599988,
+                        "deserialize_time_s": 2.7227139850000412,
+                        "compute_time_s": 26.869023932000005,
+                        "overlap_time_s": 0.0,
+                        "gpu_wait_time_s": 171.53804120199993,
+                        "bytes_downloaded": 724378957,
+                        "structures": 25000
+                    },
+                    "shards": [
+                        {
+                            "shard_index": 0,
+                            "identifier": "checkpoint_batch_0000.pt",
+                            "download_start_s": 0.00033750900001905393,
+                            "download_finish_s": 32.12168007299999,
+                            "deserialize_finish_s": 32.71884101399996,
+                            "training_start_s": 32.72757891399999,
+                            "training_finish_s": 38.105675356999996,
+                            "bytes_downloaded": 144867241,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 1,
+                            "identifier": "checkpoint_batch_0001.pt",
+                            "download_start_s": 38.12980738199997,
+                            "download_finish_s": 54.09950009099998,
+                            "deserialize_finish_s": 54.48062742000002,
+                            "training_start_s": 54.491153198000006,
+                            "training_finish_s": 59.85438563499997,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 2,
+                            "identifier": "checkpoint_batch_0002.pt",
+                            "download_start_s": 59.87890521999998,
+                            "download_finish_s": 76.23999794299993,
+                            "deserialize_finish_s": 76.80323244499994,
+                            "training_start_s": 76.81201733699993,
+                            "training_finish_s": 82.19114086699994,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 3,
+                            "identifier": "checkpoint_batch_0003.pt",
+                            "download_start_s": 82.21728786899996,
+                            "download_finish_s": 127.95495549099996,
+                            "deserialize_finish_s": 128.53306095300002,
+                            "training_start_s": 128.541343697,
+                            "training_finish_s": 133.92730027200002,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 4,
+                            "identifier": "checkpoint_batch_0004.pt",
+                            "download_start_s": 133.95176351700002,
+                            "download_finish_s": 192.43316539499995,
+                            "deserialize_finish_s": 193.03625114599993,
+                            "training_start_s": 193.04445018699994,
+                            "training_finish_s": 198.40706513399994,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "run_index": 2,
+            "order": [
+                "sequential",
+                "foldpipe"
+            ],
+            "pipelines": {
+                "sequential": {
+                    "pipeline": "sequential",
+                    "run_index": 2,
+                    "summary": {
+                        "wall_time_s": 117.94002840600001,
+                        "io_time_s": 88.09801055700007,
+                        "deserialize_time_s": 2.7364075869996896,
+                        "compute_time_s": 26.936199862999842,
+                        "overlap_time_s": 0.0,
+                        "gpu_wait_time_s": 90.97959081500017,
+                        "bytes_downloaded": 724378957,
+                        "structures": 25000
+                    },
+                    "shards": [
+                        {
+                            "shard_index": 0,
+                            "identifier": "checkpoint_batch_0000.pt",
+                            "download_start_s": 0.0003256720000308633,
+                            "download_finish_s": 14.69088293599998,
+                            "deserialize_finish_s": 15.273008533999928,
+                            "training_start_s": 15.283433413000012,
+                            "training_finish_s": 20.67313685599993,
+                            "bytes_downloaded": 144867241,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 1,
+                            "identifier": "checkpoint_batch_0001.pt",
+                            "download_start_s": 20.697002948999966,
+                            "download_finish_s": 56.79260714600002,
+                            "deserialize_finish_s": 57.37734718899992,
+                            "training_start_s": 57.38630078699998,
+                            "training_finish_s": 62.74951222799996,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 2,
+                            "identifier": "checkpoint_batch_0002.pt",
+                            "download_start_s": 62.774038219999966,
+                            "download_finish_s": 67.50474795299999,
+                            "deserialize_finish_s": 68.09345593599994,
+                            "training_start_s": 68.10186165300001,
+                            "training_finish_s": 73.499153342,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 3,
+                            "identifier": "checkpoint_batch_0003.pt",
+                            "download_start_s": 73.524759346,
+                            "download_finish_s": 94.46025240400002,
+                            "deserialize_finish_s": 94.85455097299996,
+                            "training_start_s": 94.86376881199999,
+                            "training_finish_s": 100.21369609599992,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 4,
+                            "identifier": "checkpoint_batch_0004.pt",
+                            "download_start_s": 100.23865450799997,
+                            "download_finish_s": 111.88430081299998,
+                            "deserialize_finish_s": 112.47083620699993,
+                            "training_start_s": 112.47972467199997,
+                            "training_finish_s": 117.91579067800001,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        }
+                    ]
+                },
+                "foldpipe": {
+                    "pipeline": "foldpipe",
+                    "run_index": 2,
+                    "summary": {
+                        "wall_time_s": 113.76605759699999,
+                        "io_time_s": 104.88097451899978,
+                        "deserialize_time_s": 3.1447549980002805,
+                        "compute_time_s": 27.735919386999967,
+                        "overlap_time_s": 21.099854494999818,
+                        "gpu_wait_time_s": 86.00518093300013,
+                        "bytes_downloaded": 724378957,
+                        "structures": 25000
+                    },
+                    "shards": [
+                        {
+                            "shard_index": 0,
+                            "identifier": "checkpoint_batch_0000.pt",
+                            "download_start_s": 0.0004738439999982802,
+                            "download_finish_s": 14.405784098000026,
+                            "deserialize_finish_s": 14.977962105000074,
+                            "training_start_s": 14.990899529000103,
+                            "training_finish_s": 20.383219145999988,
+                            "bytes_downloaded": 144867241,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 1,
+                            "identifier": "checkpoint_batch_0001.pt",
+                            "download_start_s": 14.988648997000041,
+                            "download_finish_s": 73.79132923700001,
+                            "deserialize_finish_s": 74.38833074399997,
+                            "training_start_s": 74.39993295200009,
+                            "training_finish_s": 80.51618238000003,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 2,
+                            "identifier": "checkpoint_batch_0002.pt",
+                            "download_start_s": 74.397528953,
+                            "download_finish_s": 79.26089986599993,
+                            "deserialize_finish_s": 80.24443591700003,
+                            "training_start_s": 80.54258606299993,
+                            "training_finish_s": 85.93071248100011,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 3,
+                            "identifier": "checkpoint_batch_0003.pt",
+                            "download_start_s": 80.54029250299993,
+                            "download_finish_s": 95.79361762299993,
+                            "deserialize_finish_s": 96.21775313199998,
+                            "training_start_s": 96.22850469100001,
+                            "training_finish_s": 101.68694623699992,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 4,
+                            "identifier": "checkpoint_batch_0004.pt",
+                            "download_start_s": 96.22619775100009,
+                            "download_finish_s": 107.78248574299994,
+                            "deserialize_finish_s": 108.35038966700006,
+                            "training_start_s": 108.36031794200005,
+                            "training_finish_s": 113.7411003200001,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "run_index": 3,
+            "order": [
+                "foldpipe",
+                "sequential"
+            ],
+            "pipelines": {
+                "foldpipe": {
+                    "pipeline": "foldpipe",
+                    "run_index": 3,
+                    "summary": {
+                        "wall_time_s": 123.77037388899998,
+                        "io_time_s": 115.07509621800023,
+                        "deserialize_time_s": 3.193114696000066,
+                        "compute_time_s": 27.595351606000122,
+                        "overlap_time_s": 21.301370613000017,
+                        "gpu_wait_time_s": 96.14961794299984,
+                        "bytes_downloaded": 724378957,
+                        "structures": 25000
+                    },
+                    "shards": [
+                        {
+                            "shard_index": 0,
+                            "identifier": "checkpoint_batch_0000.pt",
+                            "download_start_s": 0.0005066569999598869,
+                            "download_finish_s": 3.994628061999947,
+                            "deserialize_finish_s": 4.555061844999955,
+                            "training_start_s": 4.568451476999826,
+                            "training_finish_s": 10.014951760999793,
+                            "bytes_downloaded": 144867241,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 1,
+                            "identifier": "checkpoint_batch_0001.pt",
+                            "download_start_s": 4.5661904249998315,
+                            "download_finish_s": 22.97298505399999,
+                            "deserialize_finish_s": 23.555215583999825,
+                            "training_start_s": 23.567787999999837,
+                            "training_finish_s": 29.602161762999913,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 2,
+                            "identifier": "checkpoint_batch_0002.pt",
+                            "download_start_s": 23.5648669589998,
+                            "download_finish_s": 28.7005242539999,
+                            "deserialize_finish_s": 29.583970732999887,
+                            "training_start_s": 29.628198616999953,
+                            "training_finish_s": 34.98157961899983,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 3,
+                            "identifier": "checkpoint_batch_0003.pt",
+                            "download_start_s": 29.62597626999991,
+                            "download_finish_s": 55.49906959399982,
+                            "deserialize_finish_s": 56.078115259000015,
+                            "training_start_s": 56.09055692599986,
+                            "training_finish_s": 61.45930999899997,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 4,
+                            "identifier": "checkpoint_batch_0004.pt",
+                            "download_start_s": 56.08705206799982,
+                            "download_finish_s": 117.75248163299989,
+                            "deserialize_finish_s": 118.34043987199993,
+                            "training_start_s": 118.35262606499987,
+                            "training_finish_s": 123.74496954899996,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        }
+                    ]
+                },
+                "sequential": {
+                    "pipeline": "sequential",
+                    "run_index": 3,
+                    "summary": {
+                        "wall_time_s": 105.27922858299985,
+                        "io_time_s": 75.62270662900005,
+                        "deserialize_time_s": 2.6670388180000373,
+                        "compute_time_s": 26.82308022199959,
+                        "overlap_time_s": 0.0,
+                        "gpu_wait_time_s": 78.43134942400025,
+                        "bytes_downloaded": 724378957,
+                        "structures": 25000
+                    },
+                    "shards": [
+                        {
+                            "shard_index": 0,
+                            "identifier": "checkpoint_batch_0000.pt",
+                            "download_start_s": 0.0003229209999062732,
+                            "download_finish_s": 13.501087362999897,
+                            "deserialize_finish_s": 13.886597882999922,
+                            "training_start_s": 13.89516929499996,
+                            "training_finish_s": 19.275093967999965,
+                            "bytes_downloaded": 144867241,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 1,
+                            "identifier": "checkpoint_batch_0001.pt",
+                            "download_start_s": 19.299093734999815,
+                            "download_finish_s": 32.132762532000015,
+                            "deserialize_finish_s": 32.69400441599987,
+                            "training_start_s": 32.702788673999976,
+                            "training_finish_s": 38.090827511999805,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 2,
+                            "identifier": "checkpoint_batch_0002.pt",
+                            "download_start_s": 38.11547988199982,
+                            "download_finish_s": 41.82410176199983,
+                            "deserialize_finish_s": 42.391835940999954,
+                            "training_start_s": 42.40042636399994,
+                            "training_finish_s": 47.79969579899989,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 3,
+                            "identifier": "checkpoint_batch_0003.pt",
+                            "download_start_s": 47.82240720499999,
+                            "download_finish_s": 90.57455753999989,
+                            "deserialize_finish_s": 91.14418806799995,
+                            "training_start_s": 91.15503461200001,
+                            "training_finish_s": 96.4533774959998,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 4,
+                            "identifier": "checkpoint_batch_0004.pt",
+                            "download_start_s": 96.47797201200001,
+                            "download_finish_s": 99.30547318699996,
+                            "deserialize_finish_s": 99.88839489399993,
+                            "training_start_s": 99.89692525399983,
+                            "training_finish_s": 105.25442964599983,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "run_index": 4,
+            "order": [
+                "sequential",
+                "foldpipe"
+            ],
+            "pipelines": {
+                "sequential": {
+                    "pipeline": "sequential",
+                    "run_index": 4,
+                    "summary": {
+                        "wall_time_s": 86.68421663500021,
+                        "io_time_s": 56.84290536100002,
+                        "deserialize_time_s": 2.688397889000271,
+                        "compute_time_s": 26.98284022300004,
+                        "overlap_time_s": 0.0,
+                        "gpu_wait_time_s": 59.67573222100009,
+                        "bytes_downloaded": 724378957,
+                        "structures": 25000
+                    },
+                    "shards": [
+                        {
+                            "shard_index": 0,
+                            "identifier": "checkpoint_batch_0000.pt",
+                            "download_start_s": 0.00035038600003645115,
+                            "download_finish_s": 2.3504905710001367,
+                            "deserialize_finish_s": 2.9240072330001112,
+                            "training_start_s": 2.9324467769999956,
+                            "training_finish_s": 8.342910590000201,
+                            "bytes_downloaded": 144867241,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 1,
+                            "identifier": "checkpoint_batch_0001.pt",
+                            "download_start_s": 8.366642740000088,
+                            "download_finish_s": 21.392308017000005,
+                            "deserialize_finish_s": 21.984611913000208,
+                            "training_start_s": 21.995253934000175,
+                            "training_finish_s": 27.38067759400019,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 2,
+                            "identifier": "checkpoint_batch_0002.pt",
+                            "download_start_s": 27.406216952000023,
+                            "download_finish_s": 50.02961359400001,
+                            "deserialize_finish_s": 50.41938999700005,
+                            "training_start_s": 50.4279089260001,
+                            "training_finish_s": 55.796590785000035,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 3,
+                            "identifier": "checkpoint_batch_0003.pt",
+                            "download_start_s": 55.82078515500007,
+                            "download_finish_s": 71.16894113800004,
+                            "deserialize_finish_s": 71.737746861,
+                            "training_start_s": 71.7465154370002,
+                            "training_finish_s": 77.13878956000008,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 4,
+                            "identifier": "checkpoint_batch_0004.pt",
+                            "download_start_s": 77.163316635,
+                            "download_finish_s": 80.65886390900005,
+                            "deserialize_finish_s": 81.22285911400013,
+                            "training_start_s": 81.23257567600012,
+                            "training_finish_s": 86.65857244400013,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        }
+                    ]
+                },
+                "foldpipe": {
+                    "pipeline": "foldpipe",
+                    "run_index": 4,
+                    "summary": {
+                        "wall_time_s": 45.768925053999965,
+                        "io_time_s": 32.378177080999876,
+                        "deserialize_time_s": 3.2554126260001794,
+                        "compute_time_s": 28.029516607999767,
+                        "overlap_time_s": 16.486603770999864,
+                        "gpu_wait_time_s": 17.71473926700014,
+                        "bytes_downloaded": 724378957,
+                        "structures": 25000
+                    },
+                    "shards": [
+                        {
+                            "shard_index": 0,
+                            "identifier": "checkpoint_batch_0000.pt",
+                            "download_start_s": 0.00047330300003523007,
+                            "download_finish_s": 2.4537679499999285,
+                            "deserialize_finish_s": 3.0315958789999513,
+                            "training_start_s": 3.0426397559999714,
+                            "training_finish_s": 8.53743086999998,
+                            "bytes_downloaded": 144867241,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 1,
+                            "identifier": "checkpoint_batch_0001.pt",
+                            "download_start_s": 3.0404146410000976,
+                            "download_finish_s": 15.099941007000098,
+                            "deserialize_finish_s": 15.677061733000073,
+                            "training_start_s": 15.688474023000026,
+                            "training_finish_s": 21.684055153999907,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 2,
+                            "identifier": "checkpoint_batch_0002.pt",
+                            "download_start_s": 15.685929280999972,
+                            "download_finish_s": 18.01417314299988,
+                            "deserialize_finish_s": 18.886630316000037,
+                            "training_start_s": 21.710993013999996,
+                            "training_finish_s": 27.131385925999894,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 3,
+                            "identifier": "checkpoint_batch_0003.pt",
+                            "download_start_s": 21.708588408999958,
+                            "download_finish_s": 33.997704602999875,
+                            "deserialize_finish_s": 34.58975551599997,
+                            "training_start_s": 34.60099005799998,
+                            "training_finish_s": 40.40500441900008,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 4,
+                            "identifier": "checkpoint_batch_0004.pt",
+                            "download_start_s": 34.598714670999925,
+                            "download_finish_s": 37.84671068300008,
+                            "deserialize_finish_s": 38.48266656800001,
+                            "training_start_s": 40.42951878500003,
+                            "training_finish_s": 45.74425587499991,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "run_index": 5,
+            "order": [
+                "foldpipe",
+                "sequential"
+            ],
+            "pipelines": {
+                "foldpipe": {
+                    "pipeline": "foldpipe",
+                    "run_index": 5,
+                    "summary": {
+                        "wall_time_s": 80.40939387100002,
+                        "io_time_s": 68.81436792,
+                        "deserialize_time_s": 3.1686527330000445,
+                        "compute_time_s": 27.526681574000122,
+                        "overlap_time_s": 18.296456661000093,
+                        "gpu_wait_time_s": 52.859080879999965,
+                        "bytes_downloaded": 724378957,
+                        "structures": 25000
+                    },
+                    "shards": [
+                        {
+                            "shard_index": 0,
+                            "identifier": "checkpoint_batch_0000.pt",
+                            "download_start_s": 0.0005533519999971759,
+                            "download_finish_s": 2.433321678000084,
+                            "deserialize_finish_s": 2.9993602040001406,
+                            "training_start_s": 3.010306218000096,
+                            "training_finish_s": 8.396645599000067,
+                            "bytes_downloaded": 144867241,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 1,
+                            "identifier": "checkpoint_batch_0001.pt",
+                            "download_start_s": 3.0082366420001563,
+                            "download_finish_s": 19.672268994999968,
+                            "deserialize_finish_s": 20.232190487000025,
+                            "training_start_s": 20.244967063000104,
+                            "training_finish_s": 25.617026616999965,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 2,
+                            "identifier": "checkpoint_batch_0002.pt",
+                            "download_start_s": 20.242392850999977,
+                            "download_finish_s": 53.014390420000154,
+                            "deserialize_finish_s": 53.58598120500005,
+                            "training_start_s": 53.597632388999955,
+                            "training_finish_s": 59.63417297199999,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 3,
+                            "identifier": "checkpoint_batch_0003.pt",
+                            "download_start_s": 53.595273687000144,
+                            "download_finish_s": 55.78819545400006,
+                            "deserialize_finish_s": 56.67816987900005,
+                            "training_start_s": 59.65968821299998,
+                            "training_finish_s": 65.00718287400014,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 4,
+                            "identifier": "checkpoint_batch_0004.pt",
+                            "download_start_s": 59.6573365910001,
+                            "download_finish_s": 74.4099844960001,
+                            "deserialize_finish_s": 74.99111200100015,
+                            "training_start_s": 75.00151505899998,
+                            "training_finish_s": 80.38576245400009,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        }
+                    ]
+                },
+                "sequential": {
+                    "pipeline": "sequential",
+                    "run_index": 5,
+                    "summary": {
+                        "wall_time_s": 100.65284091500007,
+                        "io_time_s": 70.91997843900003,
+                        "deserialize_time_s": 2.709628576999876,
+                        "compute_time_s": 26.851490901000034,
+                        "overlap_time_s": 0.0,
+                        "gpu_wait_time_s": 73.77713206199996,
+                        "bytes_downloaded": 724378957,
+                        "structures": 25000
+                    },
+                    "shards": [
+                        {
+                            "shard_index": 0,
+                            "identifier": "checkpoint_batch_0000.pt",
+                            "download_start_s": 0.0003546620000633993,
+                            "download_finish_s": 14.237220465000064,
+                            "deserialize_finish_s": 14.826110643999982,
+                            "training_start_s": 14.835390107999956,
+                            "training_finish_s": 20.203985712000076,
+                            "bytes_downloaded": 144867241,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 1,
+                            "identifier": "checkpoint_batch_0001.pt",
+                            "download_start_s": 20.229688914999997,
+                            "download_finish_s": 23.136284484000043,
+                            "deserialize_finish_s": 23.72688210399997,
+                            "training_start_s": 23.735263092999958,
+                            "training_finish_s": 29.13431015900005,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 2,
+                            "identifier": "checkpoint_batch_0002.pt",
+                            "download_start_s": 29.160046289000093,
+                            "download_finish_s": 31.543783805999965,
+                            "deserialize_finish_s": 31.92592667200006,
+                            "training_start_s": 31.93400213599989,
+                            "training_finish_s": 37.35575543499999,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 3,
+                            "identifier": "checkpoint_batch_0003.pt",
+                            "download_start_s": 37.38308794699992,
+                            "download_finish_s": 85.87758684599999,
+                            "deserialize_finish_s": 86.45036201099992,
+                            "training_start_s": 86.45880359400007,
+                            "training_finish_s": 91.77980168999989,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 4,
+                            "identifier": "checkpoint_batch_0004.pt",
+                            "download_start_s": 91.80542207899998,
+                            "download_finish_s": 94.70370273000003,
+                            "deserialize_finish_s": 95.27892547700003,
+                            "training_start_s": 95.28752612700009,
+                            "training_finish_s": 100.628622963,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "run_index": 6,
+            "order": [
+                "sequential",
+                "foldpipe"
+            ],
+            "pipelines": {
+                "sequential": {
+                    "pipeline": "sequential",
+                    "run_index": 6,
+                    "summary": {
+                        "wall_time_s": 52.469310107999945,
+                        "io_time_s": 22.42423508899992,
+                        "deserialize_time_s": 2.924808432000191,
+                        "compute_time_s": 26.949792952000053,
+                        "overlap_time_s": 0.0,
+                        "gpu_wait_time_s": 25.494342134999897,
+                        "bytes_downloaded": 724378957,
+                        "structures": 25000
+                    },
+                    "shards": [
+                        {
+                            "shard_index": 0,
+                            "identifier": "checkpoint_batch_0000.pt",
+                            "download_start_s": 0.0002975429999878543,
+                            "download_finish_s": 2.467362331000004,
+                            "deserialize_finish_s": 3.0886303439999665,
+                            "training_start_s": 3.0971782890001123,
+                            "training_finish_s": 8.498678690000133,
+                            "bytes_downloaded": 144867241,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 1,
+                            "identifier": "checkpoint_batch_0001.pt",
+                            "download_start_s": 8.522705904000077,
+                            "download_finish_s": 11.138106524000023,
+                            "deserialize_finish_s": 11.705417822000072,
+                            "training_start_s": 11.714442136000116,
+                            "training_finish_s": 17.117048019000094,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 2,
+                            "identifier": "checkpoint_batch_0002.pt",
+                            "download_start_s": 17.145707936000008,
+                            "download_finish_s": 30.34436202300003,
+                            "deserialize_finish_s": 30.919064969000146,
+                            "training_start_s": 30.92736193099995,
+                            "training_finish_s": 36.298490809999976,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 3,
+                            "identifier": "checkpoint_batch_0003.pt",
+                            "download_start_s": 36.324001597000006,
+                            "download_finish_s": 38.43611009899996,
+                            "deserialize_finish_s": 39.009843830000136,
+                            "training_start_s": 39.01807886400002,
+                            "training_finish_s": 44.38570747500012,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 4,
+                            "identifier": "checkpoint_batch_0004.pt",
+                            "download_start_s": 44.40996940600007,
+                            "download_finish_s": 46.440976498000055,
+                            "deserialize_finish_s": 47.02876894199994,
+                            "training_start_s": 47.03720590900002,
+                            "training_finish_s": 52.44413508699995,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        }
+                    ]
+                },
+                "foldpipe": {
+                    "pipeline": "foldpipe",
+                    "run_index": 6,
+                    "summary": {
+                        "wall_time_s": 102.03054568399989,
+                        "io_time_s": 84.8857468990002,
+                        "deserialize_time_s": 3.5872884719999547,
+                        "compute_time_s": 28.735726114999807,
+                        "overlap_time_s": 12.677096594999966,
+                        "gpu_wait_time_s": 73.26919254300014,
+                        "bytes_downloaded": 724378957,
+                        "structures": 25000
+                    },
+                    "shards": [
+                        {
+                            "shard_index": 0,
+                            "identifier": "checkpoint_batch_0000.pt",
+                            "download_start_s": 0.0005170949998500873,
+                            "download_finish_s": 43.64766840399989,
+                            "deserialize_finish_s": 44.042682830999865,
+                            "training_start_s": 44.05414760899998,
+                            "training_finish_s": 49.40336022799988,
+                            "bytes_downloaded": 144867241,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 1,
+                            "identifier": "checkpoint_batch_0001.pt",
+                            "download_start_s": 44.05188522599997,
+                            "download_finish_s": 77.95593061299996,
+                            "deserialize_finish_s": 78.52822370399986,
+                            "training_start_s": 78.53969062499982,
+                            "training_finish_s": 84.60434886799999,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 2,
+                            "identifier": "checkpoint_batch_0002.pt",
+                            "download_start_s": 78.53742488699982,
+                            "download_finish_s": 81.07432060699989,
+                            "deserialize_finish_s": 81.99281955299989,
+                            "training_start_s": 84.63102428000002,
+                            "training_finish_s": 90.54209131399989,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 3,
+                            "identifier": "checkpoint_batch_0003.pt",
+                            "download_start_s": 84.62881047499991,
+                            "download_finish_s": 87.532901864,
+                            "deserialize_finish_s": 88.351215034,
+                            "training_start_s": 90.56999538199989,
+                            "training_finish_s": 96.62729273899981,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 4,
+                            "identifier": "checkpoint_batch_0004.pt",
+                            "download_start_s": 90.56780869799991,
+                            "download_finish_s": 92.46137179199991,
+                            "deserialize_finish_s": 93.34454062999998,
+                            "training_start_s": 96.65142779600001,
+                            "training_finish_s": 102.00491865799995,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "run_index": 7,
+            "order": [
+                "foldpipe",
+                "sequential"
+            ],
+            "pipelines": {
+                "foldpipe": {
+                    "pipeline": "foldpipe",
+                    "run_index": 7,
+                    "summary": {
+                        "wall_time_s": 57.670808925999836,
+                        "io_time_s": 41.57259749900004,
+                        "deserialize_time_s": 3.6177141439998195,
+                        "compute_time_s": 28.890961199999992,
+                        "overlap_time_s": 13.86339540899985,
+                        "gpu_wait_time_s": 28.754086341999937,
+                        "bytes_downloaded": 724378957,
+                        "structures": 25000
+                    },
+                    "shards": [
+                        {
+                            "shard_index": 0,
+                            "identifier": "checkpoint_batch_0000.pt",
+                            "download_start_s": 0.0005625730000247131,
+                            "download_finish_s": 18.954820403999975,
+                            "deserialize_finish_s": 19.341360126999916,
+                            "training_start_s": 19.352967763999914,
+                            "training_finish_s": 24.734334959999842,
+                            "bytes_downloaded": 144867241,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 1,
+                            "identifier": "checkpoint_batch_0001.pt",
+                            "download_start_s": 19.350363389999984,
+                            "download_finish_s": 33.47973045599997,
+                            "deserialize_finish_s": 34.042421703999935,
+                            "training_start_s": 34.05385916399996,
+                            "training_finish_s": 40.12705251800003,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 2,
+                            "identifier": "checkpoint_batch_0002.pt",
+                            "download_start_s": 34.051383806999866,
+                            "download_finish_s": 36.89723306299993,
+                            "deserialize_finish_s": 37.80191237899999,
+                            "training_start_s": 40.1545410839999,
+                            "training_finish_s": 46.18278678999991,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 3,
+                            "identifier": "checkpoint_batch_0003.pt",
+                            "download_start_s": 40.152288425999814,
+                            "download_finish_s": 43.068120994999845,
+                            "deserialize_finish_s": 43.957982541999854,
+                            "training_start_s": 46.20950167299998,
+                            "training_finish_s": 52.232806627999935,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 4,
+                            "identifier": "checkpoint_batch_0004.pt",
+                            "download_start_s": 46.20728529899998,
+                            "download_finish_s": 48.934576075999985,
+                            "deserialize_finish_s": 49.80851838599983,
+                            "training_start_s": 52.2601975529999,
+                            "training_finish_s": 57.64504754199993,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        }
+                    ]
+                },
+                "sequential": {
+                    "pipeline": "sequential",
+                    "run_index": 7,
+                    "summary": {
+                        "wall_time_s": 69.39509390299986,
+                        "io_time_s": 39.701464633999876,
+                        "deserialize_time_s": 2.7275468130003446,
+                        "compute_time_s": 26.79098878899981,
+                        "overlap_time_s": 0.0,
+                        "gpu_wait_time_s": 42.579788319000045,
+                        "bytes_downloaded": 724378957,
+                        "structures": 25000
+                    },
+                    "shards": [
+                        {
+                            "shard_index": 0,
+                            "identifier": "checkpoint_batch_0000.pt",
+                            "download_start_s": 0.000401271999862729,
+                            "download_finish_s": 1.7706861799999842,
+                            "deserialize_finish_s": 2.1947401469999477,
+                            "training_start_s": 2.2040216919999693,
+                            "training_finish_s": 7.615565131000039,
+                            "bytes_downloaded": 144867241,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 1,
+                            "identifier": "checkpoint_batch_0001.pt",
+                            "download_start_s": 7.646339318999935,
+                            "download_finish_s": 9.649100915999952,
+                            "deserialize_finish_s": 10.217853178000041,
+                            "training_start_s": 10.226109253000004,
+                            "training_finish_s": 15.608208569999988,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 2,
+                            "identifier": "checkpoint_batch_0002.pt",
+                            "download_start_s": 15.633072564000031,
+                            "download_finish_s": 47.20361739500004,
+                            "deserialize_finish_s": 47.76382042099999,
+                            "training_start_s": 47.77229946700004,
+                            "training_finish_s": 53.07591321399991,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 3,
+                            "identifier": "checkpoint_batch_0003.pt",
+                            "download_start_s": 53.10076144300001,
+                            "download_finish_s": 55.24027579499989,
+                            "deserialize_finish_s": 55.80256784800008,
+                            "training_start_s": 55.81310108499997,
+                            "training_finish_s": 61.139390155,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 4,
+                            "identifier": "checkpoint_batch_0004.pt",
+                            "download_start_s": 61.16448691200003,
+                            "download_finish_s": 63.38284585799988,
+                            "deserialize_finish_s": 63.99509136300003,
+                            "training_start_s": 64.003333892,
+                            "training_finish_s": 69.37077710799986,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "run_index": 8,
+            "order": [
+                "sequential",
+                "foldpipe"
+            ],
+            "pipelines": {
+                "sequential": {
+                    "pipeline": "sequential",
+                    "run_index": 8,
+                    "summary": {
+                        "wall_time_s": 58.97184190100006,
+                        "io_time_s": 28.9269242270002,
+                        "deserialize_time_s": 2.927622960000008,
+                        "compute_time_s": 26.94920805200036,
+                        "overlap_time_s": 0.0,
+                        "gpu_wait_time_s": 31.998636620999605,
+                        "bytes_downloaded": 724378957,
+                        "structures": 25000
+                    },
+                    "shards": [
+                        {
+                            "shard_index": 0,
+                            "identifier": "checkpoint_batch_0000.pt",
+                            "download_start_s": 0.0002967620000617899,
+                            "download_finish_s": 1.7600940239999545,
+                            "deserialize_finish_s": 2.3356222190000153,
+                            "training_start_s": 2.343794216999868,
+                            "training_finish_s": 7.735289242999897,
+                            "bytes_downloaded": 144867241,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 1,
+                            "identifier": "checkpoint_batch_0001.pt",
+                            "download_start_s": 7.759122587999855,
+                            "download_finish_s": 27.654997412000057,
+                            "deserialize_finish_s": 28.227147007999974,
+                            "training_start_s": 28.235900224000034,
+                            "training_finish_s": 33.583842495,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 2,
+                            "identifier": "checkpoint_batch_0002.pt",
+                            "download_start_s": 33.61027722899985,
+                            "download_finish_s": 36.17519697600005,
+                            "deserialize_finish_s": 36.74442378200001,
+                            "training_start_s": 36.75284365399989,
+                            "training_finish_s": 42.147012958000005,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 3,
+                            "identifier": "checkpoint_batch_0003.pt",
+                            "download_start_s": 42.17193449000001,
+                            "download_finish_s": 43.9773449679999,
+                            "deserialize_finish_s": 44.59618056999989,
+                            "training_start_s": 44.60467609199986,
+                            "training_finish_s": 50.01612031800005,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 4,
+                            "identifier": "checkpoint_batch_0004.pt",
+                            "download_start_s": 50.0423021659999,
+                            "download_finish_s": 52.943224081999915,
+                            "deserialize_finish_s": 53.535106842999994,
+                            "training_start_s": 53.5436874479999,
+                            "training_finish_s": 58.94784467299996,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        }
+                    ]
+                },
+                "foldpipe": {
+                    "pipeline": "foldpipe",
+                    "run_index": 8,
+                    "summary": {
+                        "wall_time_s": 56.240161138000076,
+                        "io_time_s": 43.22768131199973,
+                        "deserialize_time_s": 3.3431745420004972,
+                        "compute_time_s": 28.00060836500029,
+                        "overlap_time_s": 16.6553114860003,
+                        "gpu_wait_time_s": 28.21296703799976,
+                        "bytes_downloaded": 724378957,
+                        "structures": 25000
+                    },
+                    "shards": [
+                        {
+                            "shard_index": 0,
+                            "identifier": "checkpoint_batch_0000.pt",
+                            "download_start_s": 0.000511866000124428,
+                            "download_finish_s": 1.8957287640000686,
+                            "deserialize_finish_s": 2.279560749000211,
+                            "training_start_s": 2.2907945730000847,
+                            "training_finish_s": 8.352852072000132,
+                            "bytes_downloaded": 144867241,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 1,
+                            "identifier": "checkpoint_batch_0001.pt",
+                            "download_start_s": 2.288099210000155,
+                            "download_finish_s": 5.315011718000051,
+                            "deserialize_finish_s": 6.216017652000119,
+                            "training_start_s": 8.38010060900001,
+                            "training_finish_s": 13.744198378000192,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 2,
+                            "identifier": "checkpoint_batch_0002.pt",
+                            "download_start_s": 8.37787808400003,
+                            "download_finish_s": 26.96838093700012,
+                            "deserialize_finish_s": 27.53758586400022,
+                            "training_start_s": 27.550979721000203,
+                            "training_finish_s": 32.87345627800005,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 3,
+                            "identifier": "checkpoint_batch_0003.pt",
+                            "download_start_s": 27.54859101000011,
+                            "download_finish_s": 44.316464518999965,
+                            "deserialize_finish_s": 44.9242858130001,
+                            "training_start_s": 44.93586336499993,
+                            "training_finish_s": 50.88141975899998,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 4,
+                            "identifier": "checkpoint_batch_0004.pt",
+                            "download_start_s": 44.93320783600029,
+                            "download_finish_s": 47.88038338000024,
+                            "deserialize_finish_s": 48.76169378200029,
+                            "training_start_s": 50.907155256999886,
+                            "training_finish_s": 56.21357540300005,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "run_index": 9,
+            "order": [
+                "foldpipe",
+                "sequential"
+            ],
+            "pipelines": {
+                "foldpipe": {
+                    "pipeline": "foldpipe",
+                    "run_index": 9,
+                    "summary": {
+                        "wall_time_s": 73.53890291100015,
+                        "io_time_s": 59.82776350699942,
+                        "deserialize_time_s": 3.223234456001137,
+                        "compute_time_s": 28.159808206000434,
+                        "overlap_time_s": 16.079817034999905,
+                        "gpu_wait_time_s": 45.35377303599989,
+                        "bytes_downloaded": 724378957,
+                        "structures": 25000
+                    },
+                    "shards": [
+                        {
+                            "shard_index": 0,
+                            "identifier": "checkpoint_batch_0000.pt",
+                            "download_start_s": 0.00048679900010029087,
+                            "download_finish_s": 17.002551949999997,
+                            "deserialize_finish_s": 17.396096131000377,
+                            "training_start_s": 17.408407463000003,
+                            "training_finish_s": 22.821706459000325,
+                            "bytes_downloaded": 144867241,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 1,
+                            "identifier": "checkpoint_batch_0001.pt",
+                            "download_start_s": 17.405819201000213,
+                            "download_finish_s": 30.817454334000104,
+                            "deserialize_finish_s": 31.37741140700018,
+                            "training_start_s": 31.388364989000365,
+                            "training_finish_s": 37.39424573300039,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 2,
+                            "identifier": "checkpoint_batch_0002.pt",
+                            "download_start_s": 31.386019068000223,
+                            "download_finish_s": 33.37079558300002,
+                            "deserialize_finish_s": 34.254449752000255,
+                            "training_start_s": 37.42066234399999,
+                            "training_finish_s": 43.42047769100009,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 3,
+                            "identifier": "checkpoint_batch_0003.pt",
+                            "download_start_s": 37.41859694499999,
+                            "download_finish_s": 40.65561666400026,
+                            "deserialize_finish_s": 41.46821496400025,
+                            "training_start_s": 43.448580421000315,
+                            "training_finish_s": 48.89771354599998,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 4,
+                            "identifier": "checkpoint_batch_0004.pt",
+                            "download_start_s": 43.44640235500037,
+                            "download_finish_s": 67.63866934399994,
+                            "deserialize_finish_s": 68.21215007700039,
+                            "training_start_s": 68.221901248,
+                            "training_finish_s": 73.51358124200033,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        }
+                    ]
+                },
+                "sequential": {
+                    "pipeline": "sequential",
+                    "run_index": 9,
+                    "summary": {
+                        "wall_time_s": 48.624382033000074,
+                        "io_time_s": 18.882102716999725,
+                        "deserialize_time_s": 2.6645925690004333,
+                        "compute_time_s": 26.905916919999072,
+                        "overlap_time_s": 0.0,
+                        "gpu_wait_time_s": 21.69440105700096,
+                        "bytes_downloaded": 724378957,
+                        "structures": 25000
+                    },
+                    "shards": [
+                        {
+                            "shard_index": 0,
+                            "identifier": "checkpoint_batch_0000.pt",
+                            "download_start_s": 0.000313013000322826,
+                            "download_finish_s": 2.0836253910001687,
+                            "deserialize_finish_s": 2.6669620040001973,
+                            "training_start_s": 2.6753663720000986,
+                            "training_finish_s": 8.014798486000018,
+                            "bytes_downloaded": 144867241,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 1,
+                            "identifier": "checkpoint_batch_0001.pt",
+                            "download_start_s": 8.039407847000348,
+                            "download_finish_s": 10.601814353999998,
+                            "deserialize_finish_s": 10.991196660000242,
+                            "training_start_s": 10.999925200000234,
+                            "training_finish_s": 16.400847630000044,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 2,
+                            "identifier": "checkpoint_batch_0002.pt",
+                            "download_start_s": 16.424967442000252,
+                            "download_finish_s": 18.457338856000206,
+                            "deserialize_finish_s": 19.023605600000337,
+                            "training_start_s": 19.031987182000194,
+                            "training_finish_s": 24.434765391999917,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 3,
+                            "identifier": "checkpoint_batch_0003.pt",
+                            "download_start_s": 24.465384344000086,
+                            "download_finish_s": 27.794876755000132,
+                            "deserialize_finish_s": 28.35141515100031,
+                            "training_start_s": 28.360372590000225,
+                            "training_finish_s": 33.75570027599997,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 4,
+                            "identifier": "checkpoint_batch_0004.pt",
+                            "download_start_s": 33.78032286300004,
+                            "download_finish_s": 42.654842870000266,
+                            "deserialize_finish_s": 43.22391138000012,
+                            "training_start_s": 43.23286149700016,
+                            "training_finish_s": 48.60031797700003,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "run_index": 10,
+            "order": [
+                "sequential",
+                "foldpipe"
+            ],
+            "pipelines": {
+                "sequential": {
+                    "pipeline": "sequential",
+                    "run_index": 10,
+                    "summary": {
+                        "wall_time_s": 42.87743625699977,
+                        "io_time_s": 12.932475493000311,
+                        "deserialize_time_s": 2.899790500999643,
+                        "compute_time_s": 26.874273312000696,
+                        "overlap_time_s": 0.0,
+                        "gpu_wait_time_s": 15.9785413099994,
+                        "bytes_downloaded": 724378957,
+                        "structures": 25000
+                    },
+                    "shards": [
+                        {
+                            "shard_index": 0,
+                            "identifier": "checkpoint_batch_0000.pt",
+                            "download_start_s": 0.0003672949997053365,
+                            "download_finish_s": 2.6184499699998014,
+                            "deserialize_finish_s": 3.1892466219997004,
+                            "training_start_s": 3.197739256999739,
+                            "training_finish_s": 8.58302576899996,
+                            "bytes_downloaded": 144867241,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 1,
+                            "identifier": "checkpoint_batch_0001.pt",
+                            "download_start_s": 8.608572189999904,
+                            "download_finish_s": 11.696971550999933,
+                            "deserialize_finish_s": 12.275120713999968,
+                            "training_start_s": 12.283542975999808,
+                            "training_finish_s": 17.67339240299998,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 2,
+                            "identifier": "checkpoint_batch_0002.pt",
+                            "download_start_s": 17.7002387739999,
+                            "download_finish_s": 20.374090046999754,
+                            "deserialize_finish_s": 20.9563744699999,
+                            "training_start_s": 20.965062669999952,
+                            "training_finish_s": 26.35273018199996,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 3,
+                            "identifier": "checkpoint_batch_0003.pt",
+                            "download_start_s": 26.377958491999834,
+                            "download_finish_s": 28.46737518000009,
+                            "deserialize_finish_s": 29.048408526000003,
+                            "training_start_s": 29.056818412999746,
+                            "training_finish_s": 34.41956150599981,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 4,
+                            "identifier": "checkpoint_batch_0004.pt",
+                            "download_start_s": 34.44505733999995,
+                            "download_finish_s": 36.907782836000024,
+                            "deserialize_finish_s": 37.495309752999674,
+                            "training_start_s": 37.50408785399986,
+                            "training_finish_s": 42.852814622000096,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        }
+                    ]
+                },
+                "foldpipe": {
+                    "pipeline": "foldpipe",
+                    "run_index": 10,
+                    "summary": {
+                        "wall_time_s": 79.90071161800006,
+                        "io_time_s": 63.9307895539996,
+                        "deserialize_time_s": 3.6996979929999725,
+                        "compute_time_s": 28.567762508000214,
+                        "overlap_time_s": 13.74166566699978,
+                        "gpu_wait_time_s": 51.30601376799996,
+                        "bytes_downloaded": 724378957,
+                        "structures": 25000
+                    },
+                    "shards": [
+                        {
+                            "shard_index": 0,
+                            "identifier": "checkpoint_batch_0000.pt",
+                            "download_start_s": 0.00046768099991822965,
+                            "download_finish_s": 1.9688576969997484,
+                            "deserialize_finish_s": 2.3952076679997845,
+                            "training_start_s": 2.406467872000121,
+                            "training_finish_s": 8.418969600999844,
+                            "bytes_downloaded": 144867241,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 1,
+                            "identifier": "checkpoint_batch_0001.pt",
+                            "download_start_s": 2.4040615260000777,
+                            "download_finish_s": 5.102474133999749,
+                            "deserialize_finish_s": 5.9740652850000515,
+                            "training_start_s": 8.445819790999849,
+                            "training_finish_s": 13.782353393999983,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 2,
+                            "identifier": "checkpoint_batch_0002.pt",
+                            "download_start_s": 8.443467344000055,
+                            "download_finish_s": 61.993155146999925,
+                            "deserialize_finish_s": 62.589001301999815,
+                            "training_start_s": 62.60093138499997,
+                            "training_finish_s": 68.60084761400003,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 3,
+                            "identifier": "checkpoint_batch_0003.pt",
+                            "download_start_s": 62.59834410299982,
+                            "download_finish_s": 65.32927387100017,
+                            "deserialize_finish_s": 66.24685389199976,
+                            "training_start_s": 68.63011469999992,
+                            "training_finish_s": 74.53512066099984,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 4,
+                            "identifier": "checkpoint_batch_0004.pt",
+                            "download_start_s": 68.62752865699986,
+                            "download_finish_s": 71.61089801599974,
+                            "deserialize_finish_s": 72.49922871099989,
+                            "training_start_s": 74.5599712899998,
+                            "training_finish_s": 79.87377627600017,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "run_index": 11,
+            "order": [
+                "foldpipe",
+                "sequential"
+            ],
+            "pipelines": {
+                "foldpipe": {
+                    "pipeline": "foldpipe",
+                    "run_index": 11,
+                    "summary": {
+                        "wall_time_s": 59.026180386000306,
+                        "io_time_s": 42.681345427,
+                        "deserialize_time_s": 3.7166955149996284,
+                        "compute_time_s": 29.02263159099948,
+                        "overlap_time_s": 13.782122490999427,
+                        "gpu_wait_time_s": 29.97802557400064,
+                        "bytes_downloaded": 724378957,
+                        "structures": 25000
+                    },
+                    "shards": [
+                        {
+                            "shard_index": 0,
+                            "identifier": "checkpoint_batch_0000.pt",
+                            "download_start_s": 0.0004496460001064406,
+                            "download_finish_s": 2.8478130810003677,
+                            "deserialize_finish_s": 3.2375186650001524,
+                            "training_start_s": 3.24938518900035,
+                            "training_finish_s": 9.373418665000372,
+                            "bytes_downloaded": 144867241,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 1,
+                            "identifier": "checkpoint_batch_0001.pt",
+                            "download_start_s": 3.24655442600033,
+                            "download_finish_s": 5.319001578000098,
+                            "deserialize_finish_s": 6.19751638400021,
+                            "training_start_s": 9.40117904500039,
+                            "training_finish_s": 15.456931824000094,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 2,
+                            "identifier": "checkpoint_batch_0002.pt",
+                            "download_start_s": 9.399056030000338,
+                            "download_finish_s": 12.071108151000317,
+                            "deserialize_finish_s": 12.968965437999941,
+                            "training_start_s": 15.482521525000266,
+                            "training_finish_s": 21.627720611000314,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 3,
+                            "identifier": "checkpoint_batch_0003.pt",
+                            "download_start_s": 15.480238759000258,
+                            "download_finish_s": 19.13594724900031,
+                            "deserialize_finish_s": 20.090428998000334,
+                            "training_start_s": 21.65318309500026,
+                            "training_finish_s": 27.042334366999967,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 4,
+                            "identifier": "checkpoint_batch_0004.pt",
+                            "download_start_s": 21.651119301000108,
+                            "download_finish_s": 53.084893530000045,
+                            "deserialize_finish_s": 53.68102961900013,
+                            "training_start_s": 53.69216218700012,
+                            "training_finish_s": 59.00065716500012,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        }
+                    ]
+                },
+                "sequential": {
+                    "pipeline": "sequential",
+                    "run_index": 11,
+                    "summary": {
+                        "wall_time_s": 40.07888773700006,
+                        "io_time_s": 10.267722392999985,
+                        "deserialize_time_s": 2.732966923999811,
+                        "compute_time_s": 26.906764502999522,
+                        "overlap_time_s": 0.0,
+                        "gpu_wait_time_s": 13.14627591100043,
+                        "bytes_downloaded": 724378957,
+                        "structures": 25000
+                    },
+                    "shards": [
+                        {
+                            "shard_index": 0,
+                            "identifier": "checkpoint_batch_0000.pt",
+                            "download_start_s": 0.000294524000310048,
+                            "download_finish_s": 1.96011087900024,
+                            "deserialize_finish_s": 2.3519653630000903,
+                            "training_start_s": 2.3623711380000714,
+                            "training_finish_s": 7.704030368000076,
+                            "bytes_downloaded": 144867241,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 1,
+                            "identifier": "checkpoint_batch_0001.pt",
+                            "download_start_s": 7.727407560000302,
+                            "download_finish_s": 9.608454082000208,
+                            "deserialize_finish_s": 10.17775218199995,
+                            "training_start_s": 10.187033318999966,
+                            "training_finish_s": 15.557954420999977,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 2,
+                            "identifier": "checkpoint_batch_0002.pt",
+                            "download_start_s": 15.582827904000169,
+                            "download_finish_s": 17.52299227499998,
+                            "deserialize_finish_s": 18.115656630000103,
+                            "training_start_s": 18.124657625000054,
+                            "training_finish_s": 23.511142590999953,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 3,
+                            "identifier": "checkpoint_batch_0003.pt",
+                            "download_start_s": 23.537289968000096,
+                            "download_finish_s": 25.626261743000214,
+                            "deserialize_finish_s": 26.21096705500031,
+                            "training_start_s": 26.219653765000203,
+                            "training_finish_s": 31.60825952999994,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 4,
+                            "identifier": "checkpoint_batch_0004.pt",
+                            "download_start_s": 31.633264826999948,
+                            "download_finish_s": 34.03098819700017,
+                            "deserialize_finish_s": 34.62543287000017,
+                            "training_start_s": 34.63394697400008,
+                            "training_finish_s": 40.05304041399995,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "run_index": 12,
+            "order": [
+                "sequential",
+                "foldpipe"
+            ],
+            "pipelines": {
+                "sequential": {
+                    "pipeline": "sequential",
+                    "run_index": 12,
+                    "summary": {
+                        "wall_time_s": 94.98125809700014,
+                        "io_time_s": 65.30059567999979,
+                        "deserialize_time_s": 2.714727234000293,
+                        "compute_time_s": 26.789950746999693,
+                        "overlap_time_s": 0.0,
+                        "gpu_wait_time_s": 68.16705522200027,
+                        "bytes_downloaded": 724378957,
+                        "structures": 25000
+                    },
+                    "shards": [
+                        {
+                            "shard_index": 0,
+                            "identifier": "checkpoint_batch_0000.pt",
+                            "download_start_s": 0.0003131080002276576,
+                            "download_finish_s": 2.925824749000185,
+                            "deserialize_finish_s": 3.517981840000175,
+                            "training_start_s": 3.5265587849999065,
+                            "training_finish_s": 8.90756673199985,
+                            "bytes_downloaded": 144867241,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 1,
+                            "identifier": "checkpoint_batch_0001.pt",
+                            "download_start_s": 8.934939837999991,
+                            "download_finish_s": 11.480308184000023,
+                            "deserialize_finish_s": 11.874341228000048,
+                            "training_start_s": 11.882748042999992,
+                            "training_finish_s": 17.26643715299997,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 2,
+                            "identifier": "checkpoint_batch_0002.pt",
+                            "download_start_s": 17.29234558899998,
+                            "download_finish_s": 67.92788125400011,
+                            "deserialize_finish_s": 68.49835662399983,
+                            "training_start_s": 68.50732498700017,
+                            "training_finish_s": 73.84083482300002,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 3,
+                            "identifier": "checkpoint_batch_0003.pt",
+                            "download_start_s": 73.86566055399999,
+                            "download_finish_s": 76.17961755099986,
+                            "deserialize_finish_s": 76.7607974460002,
+                            "training_start_s": 76.76943246200017,
+                            "training_finish_s": 82.08708973800003,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 4,
+                            "identifier": "checkpoint_batch_0004.pt",
+                            "download_start_s": 82.11735308000016,
+                            "download_finish_s": 88.99757611099994,
+                            "deserialize_finish_s": 89.57445794500018,
+                            "training_start_s": 89.5829193909999,
+                            "training_finish_s": 94.95700596899997,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        }
+                    ]
+                },
+                "foldpipe": {
+                    "pipeline": "foldpipe",
+                    "run_index": 12,
+                    "summary": {
+                        "wall_time_s": 32.23548402899996,
+                        "io_time_s": 13.66726269099945,
+                        "deserialize_time_s": 3.9464375200004724,
+                        "compute_time_s": 29.438217218999853,
+                        "overlap_time_s": 11.593279607000113,
+                        "gpu_wait_time_s": 2.771122887000274,
+                        "bytes_downloaded": 724378957,
+                        "structures": 25000
+                    },
+                    "shards": [
+                        {
+                            "shard_index": 0,
+                            "identifier": "checkpoint_batch_0000.pt",
+                            "download_start_s": 0.000507935000314319,
+                            "download_finish_s": 2.0654002999999648,
+                            "deserialize_finish_s": 2.6512353220000477,
+                            "training_start_s": 2.6625841109998873,
+                            "training_finish_s": 8.776125523000246,
+                            "bytes_downloaded": 144867241,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 1,
+                            "identifier": "checkpoint_batch_0001.pt",
+                            "download_start_s": 2.660428052000043,
+                            "download_finish_s": 4.590893829999914,
+                            "deserialize_finish_s": 5.491377616000136,
+                            "training_start_s": 8.803109009000309,
+                            "training_finish_s": 14.605824458999905,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 2,
+                            "identifier": "checkpoint_batch_0002.pt",
+                            "download_start_s": 8.800833578000038,
+                            "download_finish_s": 13.012762858000315,
+                            "deserialize_finish_s": 13.688988786000209,
+                            "training_start_s": 14.633687564999946,
+                            "training_finish_s": 20.699818771000082,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 3,
+                            "identifier": "checkpoint_batch_0003.pt",
+                            "download_start_s": 14.631238543000109,
+                            "download_finish_s": 18.034054222000123,
+                            "deserialize_finish_s": 18.915324325000256,
+                            "training_start_s": 20.727850407999995,
+                            "training_finish_s": 26.818870141999923,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 4,
+                            "identifier": "checkpoint_batch_0004.pt",
+                            "download_start_s": 20.72564020100026,
+                            "download_finish_s": 22.7827997899999,
+                            "deserialize_finish_s": 23.685422471000038,
+                            "training_start_s": 26.844530689000294,
+                            "training_finish_s": 32.20934010600013,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "run_index": 13,
+            "order": [
+                "foldpipe",
+                "sequential"
+            ],
+            "pipelines": {
+                "foldpipe": {
+                    "pipeline": "foldpipe",
+                    "run_index": 13,
+                    "summary": {
+                        "wall_time_s": 78.39305212199997,
+                        "io_time_s": 64.64747096100018,
+                        "deserialize_time_s": 3.3580105399996683,
+                        "compute_time_s": 27.836858719000702,
+                        "overlap_time_s": 15.944771997000316,
+                        "gpu_wait_time_s": 50.53104393199965,
+                        "bytes_downloaded": 724378957,
+                        "structures": 25000
+                    },
+                    "shards": [
+                        {
+                            "shard_index": 0,
+                            "identifier": "checkpoint_batch_0000.pt",
+                            "download_start_s": 0.00048475900030098273,
+                            "download_finish_s": 1.734192520000306,
+                            "deserialize_finish_s": 2.3261562750003577,
+                            "training_start_s": 2.3376100220002627,
+                            "training_finish_s": 8.497536296000362,
+                            "bytes_downloaded": 144867241,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 1,
+                            "identifier": "checkpoint_batch_0001.pt",
+                            "download_start_s": 2.3351766470000257,
+                            "download_finish_s": 5.086824749000243,
+                            "deserialize_finish_s": 6.054822386000069,
+                            "training_start_s": 8.525295021000147,
+                            "training_finish_s": 14.218074885000078,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 2,
+                            "identifier": "checkpoint_batch_0002.pt",
+                            "download_start_s": 8.52286832100026,
+                            "download_finish_s": 11.05817469700014,
+                            "deserialize_finish_s": 11.697321371000271,
+                            "training_start_s": 14.243807091000235,
+                            "training_finish_s": 19.573609190000298,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 3,
+                            "identifier": "checkpoint_batch_0003.pt",
+                            "download_start_s": 14.240922751000198,
+                            "download_finish_s": 57.986397144999955,
+                            "deserialize_finish_s": 58.557392403999984,
+                            "training_start_s": 58.56947772800004,
+                            "training_finish_s": 63.90235322300032,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 4,
+                            "identifier": "checkpoint_batch_0004.pt",
+                            "download_start_s": 58.56646846900003,
+                            "download_finish_s": 72.44780279700035,
+                            "deserialize_finish_s": 73.03571001199998,
+                            "training_start_s": 73.04642766400002,
+                            "training_finish_s": 78.36790265100035,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        }
+                    ]
+                },
+                "sequential": {
+                    "pipeline": "sequential",
+                    "run_index": 13,
+                    "summary": {
+                        "wall_time_s": 74.44701054999996,
+                        "io_time_s": 44.75523945700024,
+                        "deserialize_time_s": 2.7095008139999663,
+                        "compute_time_s": 26.81144256800053,
+                        "overlap_time_s": 0.0,
+                        "gpu_wait_time_s": 47.608311195999704,
+                        "bytes_downloaded": 724378957,
+                        "structures": 25000
+                    },
+                    "shards": [
+                        {
+                            "shard_index": 0,
+                            "identifier": "checkpoint_batch_0000.pt",
+                            "download_start_s": 0.0003568209999684768,
+                            "download_finish_s": 1.777950366999903,
+                            "deserialize_finish_s": 2.3482926159999806,
+                            "training_start_s": 2.357676615999935,
+                            "training_finish_s": 7.707212538000022,
+                            "bytes_downloaded": 144867241,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 1,
+                            "identifier": "checkpoint_batch_0001.pt",
+                            "download_start_s": 7.732333775999905,
+                            "download_finish_s": 10.612237944000299,
+                            "deserialize_finish_s": 11.186895394000203,
+                            "training_start_s": 11.195469280999987,
+                            "training_finish_s": 16.57130093700016,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 2,
+                            "identifier": "checkpoint_batch_0002.pt",
+                            "download_start_s": 16.59539871900006,
+                            "download_finish_s": 19.08164241300028,
+                            "deserialize_finish_s": 19.664080036000087,
+                            "training_start_s": 19.672576624000158,
+                            "training_finish_s": 25.04281602600031,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 3,
+                            "identifier": "checkpoint_batch_0003.pt",
+                            "download_start_s": 25.067639992000295,
+                            "download_finish_s": 27.77139897899997,
+                            "deserialize_finish_s": 28.361498868000126,
+                            "training_start_s": 28.37027588000001,
+                            "training_finish_s": 33.761950608999996,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 4,
+                            "identifier": "checkpoint_batch_0004.pt",
+                            "download_start_s": 33.78747417700015,
+                            "download_finish_s": 68.69521323900017,
+                            "deserialize_finish_s": 69.08717684200019,
+                            "training_start_s": 69.0955929050001,
+                            "training_finish_s": 74.41975376400023,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "run_index": 14,
+            "order": [
+                "sequential",
+                "foldpipe"
+            ],
+            "pipelines": {
+                "sequential": {
+                    "pipeline": "sequential",
+                    "run_index": 14,
+                    "summary": {
+                        "wall_time_s": 43.14521509399992,
+                        "io_time_s": 13.08503721399984,
+                        "deserialize_time_s": 2.900966201999381,
+                        "compute_time_s": 26.989818200000173,
+                        "overlap_time_s": 0.0,
+                        "gpu_wait_time_s": 16.13006339499998,
+                        "bytes_downloaded": 724378957,
+                        "structures": 25000
+                    },
+                    "shards": [
+                        {
+                            "shard_index": 0,
+                            "identifier": "checkpoint_batch_0000.pt",
+                            "download_start_s": 0.0003482380002424179,
+                            "download_finish_s": 2.565279398000257,
+                            "deserialize_finish_s": 3.155385254000066,
+                            "training_start_s": 3.1644972789999883,
+                            "training_finish_s": 8.538603798000167,
+                            "bytes_downloaded": 144867241,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 1,
+                            "identifier": "checkpoint_batch_0001.pt",
+                            "download_start_s": 8.563983034000103,
+                            "download_finish_s": 11.203840046000096,
+                            "deserialize_finish_s": 11.78118576099996,
+                            "training_start_s": 11.789529147999929,
+                            "training_finish_s": 17.166766297999857,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 2,
+                            "identifier": "checkpoint_batch_0002.pt",
+                            "download_start_s": 17.192624435000198,
+                            "download_finish_s": 20.04805502499994,
+                            "deserialize_finish_s": 20.613302286999897,
+                            "training_start_s": 20.622271705000003,
+                            "training_finish_s": 26.0411591269999,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 3,
+                            "identifier": "checkpoint_batch_0003.pt",
+                            "download_start_s": 26.06634532399994,
+                            "download_finish_s": 28.566351768000004,
+                            "deserialize_finish_s": 29.15212222199989,
+                            "training_start_s": 29.160442322000108,
+                            "training_finish_s": 34.569528190000256,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 4,
+                            "identifier": "checkpoint_batch_0004.pt",
+                            "download_start_s": 34.59387576600011,
+                            "download_finish_s": 37.118687774000136,
+                            "deserialize_finish_s": 37.701184689,
+                            "training_start_s": 37.70938035400013,
+                            "training_finish_s": 43.11988159500015,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        }
+                    ]
+                },
+                "foldpipe": {
+                    "pipeline": "foldpipe",
+                    "run_index": 14,
+                    "summary": {
+                        "wall_time_s": 45.67595758399966,
+                        "io_time_s": 30.73956394799916,
+                        "deserialize_time_s": 3.3565273239996714,
+                        "compute_time_s": 28.198655013000007,
+                        "overlap_time_s": 14.929508688999704,
+                        "gpu_wait_time_s": 17.450982271999692,
+                        "bytes_downloaded": 724378957,
+                        "structures": 25000
+                    },
+                    "shards": [
+                        {
+                            "shard_index": 0,
+                            "identifier": "checkpoint_batch_0000.pt",
+                            "download_start_s": 0.00048001899995142594,
+                            "download_finish_s": 1.8160634500000015,
+                            "deserialize_finish_s": 2.407116857999881,
+                            "training_start_s": 2.4181318319997445,
+                            "training_finish_s": 7.836471683999662,
+                            "bytes_downloaded": 144867241,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 1,
+                            "identifier": "checkpoint_batch_0001.pt",
+                            "download_start_s": 2.416060213000037,
+                            "download_finish_s": 19.20237105399974,
+                            "deserialize_finish_s": 19.589379722999638,
+                            "training_start_s": 19.601457816999755,
+                            "training_finish_s": 25.472346681999625,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 2,
+                            "identifier": "checkpoint_batch_0002.pt",
+                            "download_start_s": 19.599267735000012,
+                            "download_finish_s": 21.614168720999714,
+                            "deserialize_finish_s": 22.436711768999885,
+                            "training_start_s": 25.498985594999795,
+                            "training_finish_s": 31.61857529200006,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 3,
+                            "identifier": "checkpoint_batch_0003.pt",
+                            "download_start_s": 25.496742714999982,
+                            "download_finish_s": 27.582719938999617,
+                            "deserialize_finish_s": 28.556430302999615,
+                            "training_start_s": 31.646630878999986,
+                            "training_finish_s": 37.06135446799999,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 4,
+                            "identifier": "checkpoint_batch_0004.pt",
+                            "download_start_s": 31.644352112999968,
+                            "download_finish_s": 39.681143579000036,
+                            "deserialize_finish_s": 40.26335541399976,
+                            "training_start_s": 40.27452427499975,
+                            "training_finish_s": 45.6496372849997,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "run_index": 15,
+            "order": [
+                "foldpipe",
+                "sequential"
+            ],
+            "pipelines": {
+                "foldpipe": {
+                    "pipeline": "foldpipe",
+                    "run_index": 15,
+                    "summary": {
+                        "wall_time_s": 84.55261081100025,
+                        "io_time_s": 68.41016661700041,
+                        "deserialize_time_s": 3.4783905959998265,
+                        "compute_time_s": 28.196545340000284,
+                        "overlap_time_s": 13.345487829999911,
+                        "gpu_wait_time_s": 56.330878915000085,
+                        "bytes_downloaded": 724378957,
+                        "structures": 25000
+                    },
+                    "shards": [
+                        {
+                            "shard_index": 0,
+                            "identifier": "checkpoint_batch_0000.pt",
+                            "download_start_s": 0.0005575530003625317,
+                            "download_finish_s": 28.912577609000436,
+                            "deserialize_finish_s": 29.50112345200023,
+                            "training_start_s": 29.51622160900024,
+                            "training_finish_s": 35.20290115100033,
+                            "bytes_downloaded": 144867241,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 1,
+                            "identifier": "checkpoint_batch_0001.pt",
+                            "download_start_s": 29.51389004700013,
+                            "download_finish_s": 32.04259321800009,
+                            "deserialize_finish_s": 32.65099058800024,
+                            "training_start_s": 35.22764003200018,
+                            "training_finish_s": 41.03227428900027,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 2,
+                            "identifier": "checkpoint_batch_0002.pt",
+                            "download_start_s": 35.22556630700001,
+                            "download_finish_s": 37.68068086200037,
+                            "deserialize_finish_s": 38.48333308200017,
+                            "training_start_s": 41.0602088720002,
+                            "training_finish_s": 46.421186175,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 3,
+                            "identifier": "checkpoint_batch_0003.pt",
+                            "download_start_s": 41.05779994000022,
+                            "download_finish_s": 72.56450907200042,
+                            "deserialize_finish_s": 73.14692797700036,
+                            "training_start_s": 73.15825558200004,
+                            "training_finish_s": 79.15007190100005,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 4,
+                            "identifier": "checkpoint_batch_0004.pt",
+                            "download_start_s": 73.15573396700029,
+                            "download_finish_s": 76.1633536700001,
+                            "deserialize_finish_s": 77.05972992800025,
+                            "training_start_s": 79.17498633600007,
+                            "training_finish_s": 84.52742425500037,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        }
+                    ]
+                },
+                "sequential": {
+                    "pipeline": "sequential",
+                    "run_index": 15,
+                    "summary": {
+                        "wall_time_s": 76.09051111500003,
+                        "io_time_s": 46.28972969599954,
+                        "deserialize_time_s": 2.726767078001103,
+                        "compute_time_s": 26.906555060000755,
+                        "overlap_time_s": 0.0,
+                        "gpu_wait_time_s": 49.159575065999434,
+                        "bytes_downloaded": 724378957,
+                        "structures": 25000
+                    },
+                    "shards": [
+                        {
+                            "shard_index": 0,
+                            "identifier": "checkpoint_batch_0000.pt",
+                            "download_start_s": 0.00029909800014138455,
+                            "download_finish_s": 8.040970791999825,
+                            "deserialize_finish_s": 8.620658905000255,
+                            "training_start_s": 8.629376082999897,
+                            "training_finish_s": 14.02314083400006,
+                            "bytes_downloaded": 144867241,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 1,
+                            "identifier": "checkpoint_batch_0001.pt",
+                            "download_start_s": 14.048066426999867,
+                            "download_finish_s": 20.95055340199997,
+                            "deserialize_finish_s": 21.543883913000172,
+                            "training_start_s": 21.552352429000166,
+                            "training_finish_s": 26.95047649800017,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 2,
+                            "identifier": "checkpoint_batch_0002.pt",
+                            "download_start_s": 26.975448507000237,
+                            "download_finish_s": 37.85312687299984,
+                            "deserialize_finish_s": 38.24162817200022,
+                            "training_start_s": 38.2502042189999,
+                            "training_finish_s": 43.61477804800006,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 3,
+                            "identifier": "checkpoint_batch_0003.pt",
+                            "download_start_s": 43.63949912699991,
+                            "download_finish_s": 46.01208368000016,
+                            "deserialize_finish_s": 46.595330645000104,
+                            "training_start_s": 46.60415363799984,
+                            "training_finish_s": 52.00958162999996,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 4,
+                            "identifier": "checkpoint_batch_0004.pt",
+                            "download_start_s": 52.03399638100018,
+                            "download_finish_s": 70.13030448900008,
+                            "deserialize_finish_s": 70.71230467900023,
+                            "training_start_s": 70.72146570699988,
+                            "training_finish_s": 76.06613012600019,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "run_index": 16,
+            "order": [
+                "sequential",
+                "foldpipe"
+            ],
+            "pipelines": {
+                "sequential": {
+                    "pipeline": "sequential",
+                    "run_index": 16,
+                    "summary": {
+                        "wall_time_s": 56.96743794999975,
+                        "io_time_s": 27.184729140999934,
+                        "deserialize_time_s": 2.717439552000087,
+                        "compute_time_s": 26.891617062000023,
+                        "overlap_time_s": 0.0,
+                        "gpu_wait_time_s": 30.053405868000027,
+                        "bytes_downloaded": 724378957,
+                        "structures": 25000
+                    },
+                    "shards": [
+                        {
+                            "shard_index": 0,
+                            "identifier": "checkpoint_batch_0000.pt",
+                            "download_start_s": 0.00031416599995282013,
+                            "download_finish_s": 1.9203687989997889,
+                            "deserialize_finish_s": 2.500491871000122,
+                            "training_start_s": 2.5091149009999754,
+                            "training_finish_s": 7.907133012000031,
+                            "bytes_downloaded": 144867241,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 1,
+                            "identifier": "checkpoint_batch_0001.pt",
+                            "download_start_s": 7.9356744589999835,
+                            "download_finish_s": 10.334720194000056,
+                            "deserialize_finish_s": 10.914411283999925,
+                            "training_start_s": 10.923254698000164,
+                            "training_finish_s": 16.316114692000156,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 2,
+                            "identifier": "checkpoint_batch_0002.pt",
+                            "download_start_s": 16.34091205300001,
+                            "download_finish_s": 18.987022731999787,
+                            "deserialize_finish_s": 19.572770381999817,
+                            "training_start_s": 19.583525183999882,
+                            "training_finish_s": 25.009108936999837,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 3,
+                            "identifier": "checkpoint_batch_0003.pt",
+                            "download_start_s": 25.033521694999763,
+                            "download_finish_s": 43.35084447400004,
+                            "deserialize_finish_s": 43.93699544099991,
+                            "training_start_s": 43.94637233799995,
+                            "training_finish_s": 49.25519102999988,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 4,
+                            "identifier": "checkpoint_batch_0004.pt",
+                            "download_start_s": 49.28012897100007,
+                            "download_finish_s": 51.18232428600004,
+                            "deserialize_finish_s": 51.56805105900003,
+                            "training_start_s": 51.57868641799996,
+                            "training_finish_s": 56.94502293000005,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        }
+                    ]
+                },
+                "foldpipe": {
+                    "pipeline": "foldpipe",
+                    "run_index": 16,
+                    "summary": {
+                        "wall_time_s": 99.49508921200004,
+                        "io_time_s": 88.35914943500029,
+                        "deserialize_time_s": 3.199722873999235,
+                        "compute_time_s": 27.592492402000516,
+                        "overlap_time_s": 18.888081571000384,
+                        "gpu_wait_time_s": 71.87709581099989,
+                        "bytes_downloaded": 724378957,
+                        "structures": 25000
+                    },
+                    "shards": [
+                        {
+                            "shard_index": 0,
+                            "identifier": "checkpoint_batch_0000.pt",
+                            "download_start_s": 0.0005251980001048651,
+                            "download_finish_s": 13.85444384900029,
+                            "deserialize_finish_s": 14.44485411100004,
+                            "training_start_s": 14.45598400200015,
+                            "training_finish_s": 20.451683193000008,
+                            "bytes_downloaded": 144867241,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 1,
+                            "identifier": "checkpoint_batch_0001.pt",
+                            "download_start_s": 14.453755369000191,
+                            "download_finish_s": 17.091213044000142,
+                            "deserialize_finish_s": 17.94958531700013,
+                            "training_start_s": 20.47935468200012,
+                            "training_finish_s": 25.917659367000397,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 2,
+                            "identifier": "checkpoint_batch_0002.pt",
+                            "download_start_s": 20.477096151000296,
+                            "download_finish_s": 26.63708804700036,
+                            "deserialize_finish_s": 27.214553522000188,
+                            "training_start_s": 27.225885425000342,
+                            "training_finish_s": 32.61272525600043,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 3,
+                            "identifier": "checkpoint_batch_0003.pt",
+                            "download_start_s": 27.223547255000085,
+                            "download_finish_s": 85.25954751400013,
+                            "deserialize_finish_s": 85.84197166700005,
+                            "training_start_s": 85.85320771000033,
+                            "training_finish_s": 91.28091572300036,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 4,
+                            "identifier": "checkpoint_batch_0004.pt",
+                            "download_start_s": 85.85079680400031,
+                            "download_finish_s": 93.52257775800035,
+                            "deserialize_finish_s": 94.1136284690001,
+                            "training_start_s": 94.12564753100014,
+                            "training_finish_s": 99.4695882130004,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "run_index": 17,
+            "order": [
+                "foldpipe",
+                "sequential"
+            ],
+            "pipelines": {
+                "foldpipe": {
+                    "pipeline": "foldpipe",
+                    "run_index": 17,
+                    "summary": {
+                        "wall_time_s": 67.87565956400022,
+                        "io_time_s": 54.222135911000805,
+                        "deserialize_time_s": 3.2613292289997844,
+                        "compute_time_s": 28.18075314800035,
+                        "overlap_time_s": 16.209564130000217,
+                        "gpu_wait_time_s": 39.6697134609999,
+                        "bytes_downloaded": 724378957,
+                        "structures": 25000
+                    },
+                    "shards": [
+                        {
+                            "shard_index": 0,
+                            "identifier": "checkpoint_batch_0000.pt",
+                            "download_start_s": 0.000469344000066485,
+                            "download_finish_s": 2.81561113700036,
+                            "deserialize_finish_s": 3.2016622350001853,
+                            "training_start_s": 3.21300539799995,
+                            "training_finish_s": 8.61836965600014,
+                            "bytes_downloaded": 144867241,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 1,
+                            "identifier": "checkpoint_batch_0001.pt",
+                            "download_start_s": 3.210763560000032,
+                            "download_finish_s": 31.421090563000234,
+                            "deserialize_finish_s": 31.988050693000332,
+                            "training_start_s": 31.99896895200027,
+                            "training_finish_s": 37.893344291000176,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 2,
+                            "identifier": "checkpoint_batch_0002.pt",
+                            "download_start_s": 31.996755162000227,
+                            "download_finish_s": 34.73939584600021,
+                            "deserialize_finish_s": 35.48907754400034,
+                            "training_start_s": 37.93406360000017,
+                            "training_finish_s": 44.030583389000185,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 3,
+                            "identifier": "checkpoint_batch_0003.pt",
+                            "download_start_s": 37.93145678500014,
+                            "download_finish_s": 40.57900017100019,
+                            "deserialize_finish_s": 41.52870186700011,
+                            "training_start_s": 44.06094136299998,
+                            "training_finish_s": 49.479777770000055,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 4,
+                            "identifier": "checkpoint_batch_0004.pt",
+                            "download_start_s": 44.058569455,
+                            "download_finish_s": 61.865052500000274,
+                            "deserialize_finish_s": 62.473987107000085,
+                            "training_start_s": 62.48480925400008,
+                            "training_finish_s": 67.85046660900025,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        }
+                    ]
+                },
+                "sequential": {
+                    "pipeline": "sequential",
+                    "run_index": 17,
+                    "summary": {
+                        "wall_time_s": 93.4072511180002,
+                        "io_time_s": 63.68738546800023,
+                        "deserialize_time_s": 2.6608526720001464,
+                        "compute_time_s": 26.89094029199896,
+                        "overlap_time_s": 0.0,
+                        "gpu_wait_time_s": 66.49221041900091,
+                        "bytes_downloaded": 724378957,
+                        "structures": 25000
+                    },
+                    "shards": [
+                        {
+                            "shard_index": 0,
+                            "identifier": "checkpoint_batch_0000.pt",
+                            "download_start_s": 0.0003239729999222618,
+                            "download_finish_s": 32.255260932000056,
+                            "deserialize_finish_s": 32.65097991099992,
+                            "training_start_s": 32.659911726000246,
+                            "training_finish_s": 38.04217943599997,
+                            "bytes_downloaded": 144867241,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 1,
+                            "identifier": "checkpoint_batch_0001.pt",
+                            "download_start_s": 38.06789613199999,
+                            "download_finish_s": 47.017837208999936,
+                            "deserialize_finish_s": 47.579146116000175,
+                            "training_start_s": 47.58758470000021,
+                            "training_finish_s": 52.946349414,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 2,
+                            "identifier": "checkpoint_batch_0002.pt",
+                            "download_start_s": 52.970633778999854,
+                            "download_finish_s": 55.41910155100004,
+                            "deserialize_finish_s": 55.98415566699987,
+                            "training_start_s": 55.99222893100023,
+                            "training_finish_s": 61.38237095800014,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 3,
+                            "identifier": "checkpoint_batch_0003.pt",
+                            "download_start_s": 61.40779371200006,
+                            "download_finish_s": 64.06290025199996,
+                            "deserialize_finish_s": 64.63593586800016,
+                            "training_start_s": 64.64469091000001,
+                            "training_finish_s": 70.0603048779999,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 4,
+                            "identifier": "checkpoint_batch_0004.pt",
+                            "download_start_s": 70.0856008830001,
+                            "download_finish_s": 87.46453400300015,
+                            "deserialize_finish_s": 88.03026905700017,
+                            "training_start_s": 88.03899883800023,
+                            "training_finish_s": 93.38315071099987,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "run_index": 18,
+            "order": [
+                "sequential",
+                "foldpipe"
+            ],
+            "pipelines": {
+                "sequential": {
+                    "pipeline": "sequential",
+                    "run_index": 18,
+                    "summary": {
+                        "wall_time_s": 78.24346397999989,
+                        "io_time_s": 48.14622897599975,
+                        "deserialize_time_s": 2.9967223260005085,
+                        "compute_time_s": 26.924678176999805,
+                        "overlap_time_s": 0.0,
+                        "gpu_wait_time_s": 51.29305014500005,
+                        "bytes_downloaded": 724378957,
+                        "structures": 25000
+                    },
+                    "shards": [
+                        {
+                            "shard_index": 0,
+                            "identifier": "checkpoint_batch_0000.pt",
+                            "download_start_s": 0.00032538100003876025,
+                            "download_finish_s": 2.5545075129998622,
+                            "deserialize_finish_s": 3.128835210000034,
+                            "training_start_s": 3.1372607050002443,
+                            "training_finish_s": 8.49965241000018,
+                            "bytes_downloaded": 144867241,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 1,
+                            "identifier": "checkpoint_batch_0001.pt",
+                            "download_start_s": 8.526201795999896,
+                            "download_finish_s": 32.35830520299987,
+                            "deserialize_finish_s": 32.93492954400017,
+                            "training_start_s": 32.944154703000095,
+                            "training_finish_s": 38.306693085999996,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 2,
+                            "identifier": "checkpoint_batch_0002.pt",
+                            "download_start_s": 38.33272450200002,
+                            "download_finish_s": 40.39614434299983,
+                            "deserialize_finish_s": 40.994601155000055,
+                            "training_start_s": 41.00357476599993,
+                            "training_finish_s": 46.43009965800002,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 3,
+                            "identifier": "checkpoint_batch_0003.pt",
+                            "download_start_s": 46.456062616000054,
+                            "download_finish_s": 64.42050354899993,
+                            "deserialize_finish_s": 65.05283267699997,
+                            "training_start_s": 65.062437348,
+                            "training_finish_s": 70.44006262099992,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 4,
+                            "identifier": "checkpoint_batch_0004.pt",
+                            "download_start_s": 70.465776259,
+                            "download_finish_s": 72.19785892200025,
+                            "deserialize_finish_s": 72.81284327000003,
+                            "training_start_s": 72.8221303979999,
+                            "training_finish_s": 78.21772832199986,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        }
+                    ]
+                },
+                "foldpipe": {
+                    "pipeline": "foldpipe",
+                    "run_index": 18,
+                    "summary": {
+                        "wall_time_s": 59.624118483000075,
+                        "io_time_s": 45.465109922000465,
+                        "deserialize_time_s": 3.3276025300001493,
+                        "compute_time_s": 28.268031253001027,
+                        "overlap_time_s": 15.779774945000554,
+                        "gpu_wait_time_s": 31.33079731099906,
+                        "bytes_downloaded": 724378957,
+                        "structures": 25000
+                    },
+                    "shards": [
+                        {
+                            "shard_index": 0,
+                            "identifier": "checkpoint_batch_0000.pt",
+                            "download_start_s": 0.0004911339997306641,
+                            "download_finish_s": 2.0136521350000294,
+                            "deserialize_finish_s": 2.4102166249999755,
+                            "training_start_s": 2.421814052999707,
+                            "training_finish_s": 7.858079259000078,
+                            "bytes_downloaded": 144867241,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 1,
+                            "identifier": "checkpoint_batch_0001.pt",
+                            "download_start_s": 2.4194878089997474,
+                            "download_finish_s": 26.17159609600003,
+                            "deserialize_finish_s": 26.745910014999936,
+                            "training_start_s": 26.75752766000005,
+                            "training_finish_s": 32.771562421,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 2,
+                            "identifier": "checkpoint_batch_0002.pt",
+                            "download_start_s": 26.75511184800007,
+                            "download_finish_s": 29.558618319999823,
+                            "deserialize_finish_s": 30.443333383999743,
+                            "training_start_s": 32.80229664999979,
+                            "training_finish_s": 38.855823984999915,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 3,
+                            "identifier": "checkpoint_batch_0003.pt",
+                            "download_start_s": 32.80020055399973,
+                            "download_finish_s": 34.96263646299985,
+                            "deserialize_finish_s": 35.844252705000144,
+                            "training_start_s": 38.88426271599974,
+                            "training_finish_s": 44.266341982000085,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 4,
+                            "identifier": "checkpoint_batch_0004.pt",
+                            "download_start_s": 38.88182654299999,
+                            "download_finish_s": 53.615724795999995,
+                            "deserialize_finish_s": 54.20611761100008,
+                            "training_start_s": 54.21670387899985,
+                            "training_finish_s": 59.59882856400009,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "run_index": 19,
+            "order": [
+                "foldpipe",
+                "sequential"
+            ],
+            "pipelines": {
+                "foldpipe": {
+                    "pipeline": "foldpipe",
+                    "run_index": 19,
+                    "summary": {
+                        "wall_time_s": 44.277748874999816,
+                        "io_time_s": 27.536083269999835,
+                        "deserialize_time_s": 3.587779979000061,
+                        "compute_time_s": 28.583361399999376,
+                        "overlap_time_s": 13.185896289999619,
+                        "gpu_wait_time_s": 15.670893782000348,
+                        "bytes_downloaded": 724378957,
+                        "structures": 25000
+                    },
+                    "shards": [
+                        {
+                            "shard_index": 0,
+                            "identifier": "checkpoint_batch_0000.pt",
+                            "download_start_s": 0.0004629840000234253,
+                            "download_finish_s": 2.3000598129997343,
+                            "deserialize_finish_s": 2.928386840999792,
+                            "training_start_s": 2.9426004970000577,
+                            "training_finish_s": 8.806627974999628,
+                            "bytes_downloaded": 144867241,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 1,
+                            "identifier": "checkpoint_batch_0001.pt",
+                            "download_start_s": 2.9381667339998785,
+                            "download_finish_s": 5.655616940000073,
+                            "deserialize_finish_s": 6.301587492999715,
+                            "training_start_s": 8.831814655000017,
+                            "training_finish_s": 14.822831727999983,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 2,
+                            "identifier": "checkpoint_batch_0002.pt",
+                            "download_start_s": 8.82971087199985,
+                            "download_finish_s": 11.255964263999886,
+                            "deserialize_finish_s": 12.105999292999968,
+                            "training_start_s": 14.851119856999958,
+                            "training_finish_s": 20.860043008000048,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 3,
+                            "identifier": "checkpoint_batch_0003.pt",
+                            "download_start_s": 14.848898149999968,
+                            "download_finish_s": 17.493115782999666,
+                            "deserialize_finish_s": 18.360048147999805,
+                            "training_start_s": 20.887897706999865,
+                            "training_finish_s": 26.29463201899989,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 4,
+                            "identifier": "checkpoint_batch_0004.pt",
+                            "download_start_s": 20.885418657999708,
+                            "download_finish_s": 38.333983867999905,
+                            "deserialize_finish_s": 38.930498872000044,
+                            "training_start_s": 38.941595796,
+                            "training_finish_s": 44.254255181999724,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        }
+                    ]
+                },
+                "sequential": {
+                    "pipeline": "sequential",
+                    "run_index": 19,
+                    "summary": {
+                        "wall_time_s": 70.37225289099979,
+                        "io_time_s": 40.64566922999984,
+                        "deserialize_time_s": 2.7016369280004255,
+                        "compute_time_s": 26.855404660000204,
+                        "overlap_time_s": 0.0,
+                        "gpu_wait_time_s": 43.491609390999656,
+                        "bytes_downloaded": 724378957,
+                        "structures": 25000
+                    },
+                    "shards": [
+                        {
+                            "shard_index": 0,
+                            "identifier": "checkpoint_batch_0000.pt",
+                            "download_start_s": 0.0003834499998447427,
+                            "download_finish_s": 14.758114910999666,
+                            "deserialize_finish_s": 15.354623231999994,
+                            "training_start_s": 15.363562030999674,
+                            "training_finish_s": 20.704300357999728,
+                            "bytes_downloaded": 144867241,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 1,
+                            "identifier": "checkpoint_batch_0001.pt",
+                            "download_start_s": 20.729002475000016,
+                            "download_finish_s": 22.740824752999742,
+                            "deserialize_finish_s": 23.129092694000065,
+                            "training_start_s": 23.137394559999848,
+                            "training_finish_s": 28.48023489299976,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 2,
+                            "identifier": "checkpoint_batch_0002.pt",
+                            "download_start_s": 28.506183490999774,
+                            "download_finish_s": 30.804407259000072,
+                            "deserialize_finish_s": 31.376972525999918,
+                            "training_start_s": 31.385672229999727,
+                            "training_finish_s": 36.7560474779998,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 3,
+                            "identifier": "checkpoint_batch_0003.pt",
+                            "download_start_s": 36.780294539999886,
+                            "download_finish_s": 55.8636688229999,
+                            "deserialize_finish_s": 56.43047405199968,
+                            "training_start_s": 56.43900755799996,
+                            "training_finish_s": 61.82721966200006,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        },
+                        {
+                            "shard_index": 4,
+                            "identifier": "checkpoint_batch_0004.pt",
+                            "download_start_s": 61.85224488599988,
+                            "download_finish_s": 64.34676232599986,
+                            "deserialize_finish_s": 64.92425249600001,
+                            "training_start_s": 64.9337754029998,
+                            "training_finish_s": 70.34701405099986,
+                            "bytes_downloaded": 144877929,
+                            "structures": 5000
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "sequential": {
+        "time_s": {
+            "mean": 83.37161283869997,
+            "median": 75.26876083249999,
+            "sample_std": 39.864546953845576,
+            "ci_95": {
+                "low": 67.86779156776996,
+                "high": 101.05665250254741,
+                "method": "percentile bootstrap",
+                "resamples": 20000
+            },
+            "raw": [
+                158.37197423699996,
+                198.432615264,
+                117.94002840600001,
+                105.27922858299985,
+                86.68421663500021,
+                100.65284091500007,
+                52.469310107999945,
+                69.39509390299986,
+                58.97184190100006,
+                48.624382033000074,
+                42.87743625699977,
+                40.07888773700006,
+                94.98125809700014,
+                74.44701054999996,
+                43.14521509399992,
+                76.09051111500003,
+                56.96743794999975,
+                93.4072511180002,
+                78.24346397999989,
+                70.37225289099979
+            ]
+        },
+        "throughput_shards_per_s": {
+            "mean": 0.07139964907804164,
+            "median": 0.06643653993991035,
+            "sample_std": 0.028514156266935993,
+            "ci_95": {
+                "low": 0.05951476233429279,
+                "high": 0.08404776423685184,
+                "method": "percentile bootstrap",
+                "resamples": 20000
+            },
+            "raw": [
+                0.03157124247575279,
+                0.02519747065444795,
+                0.04239442763900193,
+                0.04749274920891075,
+                0.05768062738633743,
+                0.049675696726955085,
+                0.09529380107549108,
+                0.07205120302868927,
+                0.08478622744044235,
+                0.10282907033361643,
+                0.11661144966855956,
+                0.12475396105825802,
+                0.05264196432198995,
+                0.06716186403001245,
+                0.11588770595085839,
+                0.06571121584980824,
+                0.0877694377687916,
+                0.05352903484638,
+                0.0639031012389491,
+                0.07105073085758025
+            ]
+        },
+        "peak_rss_gb": {
+            "mean": 1.935017967224121,
+            "median": 1.934539794921875,
+            "sample_std": 0.009842767081647268,
+            "ci_95": {
+                "low": 1.9305150508880615,
+                "high": 1.9389789915084839,
+                "method": "percentile bootstrap",
+                "resamples": 20000
+            },
+            "raw": [
+                1.9068374633789062,
+                1.9229660034179688,
+                1.9229698181152344,
+                1.9449005126953125,
+                1.943939208984375,
+                1.9467544555664062,
+                1.9467620849609375,
+                1.94677734375,
+                1.9289817810058594,
+                1.93280029296875,
+                1.9328041076660156,
+                1.9328117370605469,
+                1.9328117370605469,
+                1.9328117370605469,
+                1.9328117370605469,
+                1.9418907165527344,
+                1.9418907165527344,
+                1.9362831115722656,
+                1.9362869262695312,
+                1.9362678527832031
+            ]
+        },
+        "avg_gpu_util_percent": {
+            "mean": 36.171660319728616,
+            "median": 33.78630897317299,
+            "sample_std": 14.473327192545714,
+            "ci_95": {
+                "low": 30.143208550063143,
+                "high": 42.3615591837456,
+                "method": "percentile bootstrap",
+                "resamples": 20000
+            },
+            "raw": [
+                14.962328767123287,
+                12.80108991825613,
+                21.880733944954127,
+                24.425641025641024,
+                29.56875,
+                25.123655913978496,
+                47.90721649484536,
+                36.6171875,
+                43.48623853211009,
+                51.6,
+                58.936708860759495,
+                63.2972972972973,
+                26.68,
+                34.2463768115942,
+                59.607594936708864,
+                33.326241134751776,
+                43.20952380952381,
+                27.709302325581394,
+                31.65972222222222,
+                36.3875968992248
+            ]
+        },
+        "io_time_s": {
+            "mean": 53.59680653989996,
+            "median": 45.52248457649989,
+            "sample_std": 40.008884691667554,
+            "ci_95": {
+                "low": 37.96694517188991,
+                "high": 72.03447365780494,
+                "method": "percentile bootstrap",
+                "resamples": 20000
+            },
+            "raw": [
+                129.55179290099989,
+                168.67119749599988,
+                88.09801055700007,
+                75.62270662900005,
+                56.84290536100002,
+                70.91997843900003,
+                22.42423508899992,
+                39.701464633999876,
+                28.9269242270002,
+                18.882102716999725,
+                12.932475493000311,
+                10.267722392999985,
+                65.30059567999979,
+                44.75523945700024,
+                13.08503721399984,
+                46.28972969599954,
+                27.184729140999934,
+                63.68738546800023,
+                48.14622897599975,
+                40.64566922999984
+            ]
+        },
+        "compute_time_s": {
+            "mean": 26.843538028749958,
+            "median": 26.89127867699949,
+            "sample_std": 0.2134237615915985,
+            "ci_95": {
+                "low": 26.739111247152465,
+                "high": 26.908779610343654,
+                "method": "percentile bootstrap",
+                "resamples": 20000
+            },
+            "raw": [
+                25.970774140000003,
+                26.869023932000005,
+                26.936199862999842,
+                26.82308022199959,
+                26.98284022300004,
+                26.851490901000034,
+                26.949792952000053,
+                26.79098878899981,
+                26.94920805200036,
+                26.905916919999072,
+                26.874273312000696,
+                26.906764502999522,
+                26.789950746999693,
+                26.81144256800053,
+                26.989818200000173,
+                26.906555060000755,
+                26.891617062000023,
+                26.89094029199896,
+                26.924678176999805,
+                26.855404660000204
+            ]
+        },
+        "overlap_time_s": {
+            "mean": 0.0,
+            "median": 0.0,
+            "sample_std": 0.0,
+            "ci_95": {
+                "low": 0.0,
+                "high": 0.0,
+                "method": "percentile bootstrap",
+                "resamples": 20000
+            },
+            "raw": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ]
+        },
+        "gpu_wait_time_s": {
+            "mean": 56.50327201150004,
+            "median": 48.38394313099957,
+            "sample_std": 39.96852413007416,
+            "ci_95": {
+                "low": 40.90140789848504,
+                "high": 74.72005341917252,
+                "method": "percentile bootstrap",
+                "resamples": 20000
+            },
+            "raw": [
+                132.376328451,
+                171.53804120199993,
+                90.97959081500017,
+                78.43134942400025,
+                59.67573222100009,
+                73.77713206199996,
+                25.494342134999897,
+                42.579788319000045,
+                31.998636620999605,
+                21.69440105700096,
+                15.9785413099994,
+                13.14627591100043,
+                68.16705522200027,
+                47.608311195999704,
+                16.13006339499998,
+                49.159575065999434,
+                30.053405868000027,
+                66.49221041900091,
+                51.29305014500005,
+                43.491609390999656
+            ]
+        }
+    },
+    "foldpipe": {
+        "time_s": {
+            "mean": 76.78027098695001,
+            "median": 75.96597751650006,
+            "sample_std": 28.45835642775914,
+            "ci_95": {
+                "low": 64.85860024016002,
+                "high": 89.44027837754379,
+                "method": "percentile bootstrap",
+                "resamples": 20000
+            },
+            "raw": [
+                92.33069372199998,
+                139.022944263,
+                113.76605759699999,
+                123.77037388899998,
+                45.768925053999965,
+                80.40939387100002,
+                102.03054568399989,
+                57.670808925999836,
+                56.240161138000076,
+                73.53890291100015,
+                79.90071161800006,
+                59.026180386000306,
+                32.23548402899996,
+                78.39305212199997,
+                45.67595758399966,
+                84.55261081100025,
+                99.49508921200004,
+                67.87565956400022,
+                59.624118483000075,
+                44.277748874999816
+            ]
+        },
+        "throughput_shards_per_s": {
+            "mean": 0.07469843386043966,
+            "median": 0.06588619313419984,
+            "sample_std": 0.02979958756642559,
+            "ci_95": {
+                "low": 0.06270718368937186,
+                "high": 0.08827274325131294,
+                "method": "percentile bootstrap",
+                "resamples": 20000
+            },
+            "raw": [
+                0.05415317267142585,
+                0.03596528635259752,
+                0.0439498397466825,
+                0.040397389479360474,
+                0.10924442717631679,
+                0.06218178945635941,
+                0.049004932459006584,
+                0.08669897463057503,
+                0.08890443944019258,
+                0.06799122372074559,
+                0.06257766543938513,
+                0.08470817469981318,
+                0.15510857524279323,
+                0.06378116254765409,
+                0.10946677999700012,
+                0.05913477954189326,
+                0.050253736537149145,
+                0.07366410922733621,
+                0.08385868214430023,
+                0.1129235366982062
+            ]
+        },
+        "peak_rss_gb": {
+            "mean": 2.064020347595215,
+            "median": 2.079305648803711,
+            "sample_std": 0.04535959875693999,
+            "ci_95": {
+                "low": 2.0420337200164798,
+                "high": 2.079636421203613,
+                "method": "percentile bootstrap",
+                "resamples": 20000
+            },
+            "raw": [
+                1.9326820373535156,
+                1.9317283630371094,
+                2.065441131591797,
+                2.072093963623047,
+                2.0792808532714844,
+                2.07928466796875,
+                2.0793113708496094,
+                2.0793190002441406,
+                2.07928466796875,
+                2.0792999267578125,
+                2.084197998046875,
+                2.082244873046875,
+                2.0822525024414062,
+                2.0822410583496094,
+                2.0822486877441406,
+                2.0792999267578125,
+                2.066364288330078,
+                2.0793228149414062,
+                2.0822486877441406,
+                2.0822601318359375
+            ]
+        },
+        "avg_gpu_util_percent": {
+            "mean": 37.702995153694644,
+            "median": 33.68788032454361,
+            "sample_std": 14.966995102236863,
+            "ci_95": {
+                "low": 31.740141407255795,
+                "high": 44.46433919584694,
+                "method": "percentile bootstrap",
+                "resamples": 20000
+            },
+            "raw": [
+                28.323529411764707,
+                17.700389105058367,
+                22.257142857142856,
+                20.4235807860262,
+                54.79761904761905,
+                31.42953020134228,
+                25.11111111111111,
+                43.075471698113205,
+                43.57692307692308,
+                34.720588235294116,
+                31.08843537414966,
+                42.75229357798165,
+                79.05084745762711,
+                32.6551724137931,
+                55.154761904761905,
+                29.384615384615383,
+                25.85792349726776,
+                37.73015873015873,
+                43.46363636363636,
+                55.50617283950617
+            ]
+        },
+        "io_time_s": {
+            "mean": 63.260257631899975,
+            "median": 61.87927653049951,
+            "sample_std": 30.786185909439457,
+            "ci_95": {
+                "low": 50.76363046254854,
+                "high": 76.4863381578487,
+                "method": "percentile bootstrap",
+                "resamples": 20000
+            },
+            "raw": [
+                84.23318171100021,
+                130.6504882359999,
+                104.88097451899978,
+                115.07509621800023,
+                32.378177080999876,
+                68.81436792,
+                84.8857468990002,
+                41.57259749900004,
+                43.22768131199973,
+                59.82776350699942,
+                63.9307895539996,
+                42.681345427,
+                13.66726269099945,
+                64.64747096100018,
+                30.73956394799916,
+                68.41016661700041,
+                88.35914943500029,
+                54.222135911000805,
+                45.465109922000465,
+                27.536083269999835
+            ]
+        },
+        "compute_time_s": {
+            "mean": 28.103012828900127,
+            "median": 28.17028067700039,
+            "sample_std": 0.685858691753332,
+            "ci_95": {
+                "low": 27.804811264403952,
+                "high": 28.390827668318884,
+                "method": "percentile bootstrap",
+                "resamples": 20000
+            },
+            "raw": [
+                26.584969721999926,
+                26.91540520200033,
+                27.735919386999967,
+                27.595351606000122,
+                28.029516607999767,
+                27.526681574000122,
+                28.735726114999807,
+                28.890961199999992,
+                28.00060836500029,
+                28.159808206000434,
+                28.567762508000214,
+                29.02263159099948,
+                29.438217218999853,
+                27.836858719000702,
+                28.198655013000007,
+                28.196545340000284,
+                27.592492402000516,
+                28.18075314800035,
+                28.268031253001027,
+                28.583361399999376
+            ]
+        },
+        "overlap_time_s": {
+            "mean": 16.333334489800002,
+            "median": 16.01229451600011,
+            "sample_std": 3.1275708811324887,
+            "ci_95": {
+                "low": 15.037262120171215,
+                "high": 17.701111336708824,
+                "method": "percentile bootstrap",
+                "resamples": 20000
+            },
+            "raw": [
+                21.279826162999996,
+                21.526804351000237,
+                21.099854494999818,
+                21.301370613000017,
+                16.486603770999864,
+                18.296456661000093,
+                12.677096594999966,
+                13.86339540899985,
+                16.6553114860003,
+                16.079817034999905,
+                13.74166566699978,
+                13.782122490999427,
+                11.593279607000113,
+                15.944771997000316,
+                14.929508688999704,
+                13.345487829999911,
+                18.888081571000384,
+                16.209564130000217,
+                15.779774945000554,
+                13.185896289999619
+            ]
+        },
+        "gpu_wait_time_s": {
+            "mean": 48.652036184499956,
+            "median": 47.94240848399977,
+            "sample_std": 28.906593444533172,
+            "ci_95": {
+                "low": 36.73415691835627,
+                "high": 61.309512123000005,
+                "method": "percentile bootstrap",
+                "resamples": 20000
+            },
+            "raw": [
+                65.72257233500005,
+                112.08294565999972,
+                86.00518093300013,
+                96.14961794299984,
+                17.71473926700014,
+                52.859080879999965,
+                73.26919254300014,
+                28.754086341999937,
+                28.21296703799976,
+                45.35377303599989,
+                51.30601376799996,
+                29.97802557400064,
+                2.771122887000274,
+                50.53104393199965,
+                17.450982271999692,
+                56.330878915000085,
+                71.87709581099989,
+                39.6697134609999,
+                31.33079731099906,
+                15.670893782000348
+            ]
+        }
+    },
+    "paired_effect": {
+        "speedup_ratio": {
+            "mean": 1.1704778484513052,
+            "median": 1.0426303895126954,
+            "sample_std": 0.5751328985043678,
+            "ci_95": {
+                "low": 0.9481490592535966,
+                "high": 1.4363633384606782,
+                "method": "percentile bootstrap",
+                "resamples": 20000
+            },
+            "raw": [
+                1.7152689734341733,
+                1.4273371659329148,
+                1.0366890696325763,
+                0.8506012002308129,
+                1.8939535183036698,
+                1.2517547523921944,
+                0.5142509996026418,
+                1.2032966971565113,
+                1.0485717093928142,
+                0.661206247417742,
+                0.5366339721978187,
+                0.6790018848400002,
+                2.9464815236387416,
+                0.9496633762152933,
+                0.9445935537236276,
+                0.8999191200031009,
+                0.5725653235871359,
+                1.376152389796318,
+                1.312278755153563,
+                1.5893367363744524
+            ]
+        },
+        "geometric_mean_speedup": {
+            "estimate": 1.0586696719559852,
+            "ci_95": {
+                "low": 0.8775676616074979,
+                "high": 1.2880082974800806,
+                "method": "paired percentile bootstrap in log-ratio space",
+                "resamples": 20000
+            },
+            "raw": [
+                1.7152689734341733,
+                1.4273371659329148,
+                1.0366890696325763,
+                0.8506012002308129,
+                1.8939535183036698,
+                1.2517547523921944,
+                0.5142509996026418,
+                1.2032966971565113,
+                1.0485717093928142,
+                0.661206247417742,
+                0.5366339721978187,
+                0.6790018848400002,
+                2.9464815236387416,
+                0.9496633762152933,
+                0.9445935537236276,
+                0.8999191200031009,
+                0.5725653235871359,
+                1.376152389796318,
+                1.312278755153563,
+                1.5893367363744524
+            ]
+        },
+        "time_saved_s": {
+            "mean": 6.591341851749965,
+            "median": 3.4528257860000053,
+            "sample_std": 33.97802815010063,
+            "ci_95": {
+                "low": -7.691866370577561,
+                "high": 21.107800102748747,
+                "method": "percentile bootstrap",
+                "resamples": 20000
+            },
+            "raw": [
+                66.04128051499998,
+                59.40967100099999,
+                4.173970809000025,
+                -18.491145306000135,
+                40.91529158100025,
+                20.24344704400005,
+                -49.561235575999945,
+                11.724284977000025,
+                2.7316807629999857,
+                -24.914520878000076,
+                -37.02327536100029,
+                -18.947292649000246,
+                62.74577406800017,
+                -3.946041572000013,
+                -2.5307424899997386,
+                -8.462099696000223,
+                -42.52765126200029,
+                25.531591553999988,
+                18.619345496999813,
+                26.094504015999973
+            ]
+        },
+        "median_time_saved_s": {
+            "median": 3.4528257860000053,
+            "ci_95": {
+                "low": -13.476622501000179,
+                "high": 22.88751929900002,
+                "method": "paired percentile bootstrap for the median",
+                "resamples": 20000
+            },
+            "raw": [
+                66.04128051499998,
+                59.40967100099999,
+                4.173970809000025,
+                -18.491145306000135,
+                40.91529158100025,
+                20.24344704400005,
+                -49.561235575999945,
+                11.724284977000025,
+                2.7316807629999857,
+                -24.914520878000076,
+                -37.02327536100029,
+                -18.947292649000246,
+                62.74577406800017,
+                -3.946041572000013,
+                -2.5307424899997386,
+                -8.462099696000223,
+                -42.52765126200029,
+                25.531591553999988,
+                18.619345496999813,
+                26.094504015999973
+            ]
+        },
+        "foldpipe_faster_fraction": 0.55
+    }
+}

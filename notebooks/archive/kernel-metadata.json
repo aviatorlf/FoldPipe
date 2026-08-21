@@ -1,0 +1,16 @@
+{
+  "id": "dhirenkhatri/foldpipe-prion-overnight",
+  "title": "FoldPipe Prion Overnight",
+  "code_file": "foldpipe_script.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_internet": true,
+  "dataset_sources": [
+    "dhirenkhatri/gcp-secret-dataset"
+  ],
+  "competition_sources": [],
+  "kernel_sources": [],
+  "machine_shape": "NvidiaTeslaT4"
+}
